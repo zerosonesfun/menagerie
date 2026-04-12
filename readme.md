@@ -35,7 +35,7 @@ Menagerie by [Billy Wilcosky](https://wilcosky.com) resizes and re-encodes image
 - For **Advanced encoders (WebAssembly)** to run, the Vite build must be present: `assets/js/dist/menagerie-optimizer.js` plus the generated `assets/` chunks beside it. From the plugin directory run `npm install` then `npm run build`, and commit `assets/js/dist/` with your release.
 - The browser only receives `wasmEncoders: true` when that bundle exists; otherwise the classic script path is used and behavior matches “WASM off.” If you enable the setting without running the build, a **Settings** notice explains that `dist/` is missing.
 - **Bulk uploads**: WASM encodes are **serialized** on one worker queue so overlapping jobs cannot corrupt output; together with the existing sequential optimization queue, many-file batches are handled safely.
-- **Zipping without `node_modules`**: run `scripts/make-zip.sh` from the plugin directory (it writes `menagerie-release.zip` next to the `menagerie` folder—same parent directory—excluding `node_modules`). Or manually: `zip -r my-menagerie.zip menagerie -x "menagerie/node_modules/*"`. Do not distribute `node_modules` to end users.
+- Do not distribute `node_modules` to end users.
 
 ## Frequently asked questions
 
