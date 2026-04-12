@@ -26,6 +26,7 @@
 	 * @property {boolean} [preserveTransparency]
 	 * @property {boolean} [processAdmin]
 	 * @property {boolean} [processFrontend]
+	 * @property {boolean} [serverSideOnly]
 	 * @property {string} [uploadNonce]
 	 * @property {Object} [strings]
 	 */
@@ -39,6 +40,9 @@
 
 	function contextAllowed() {
 		if (!C.enabled) {
+			return false;
+		}
+		if (C.serverSideOnly) {
 			return false;
 		}
 		if (C.context === 'admin' && !C.processAdmin) {
@@ -375,6 +379,82 @@
 	}
 
 	/**
+	 * Native canvas AVIF — quality ladder then type-only (dist build uses WASM + this).
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @param {number} q 0–1
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function canvasToBlobAvifNative(canvasEl, q) {
+		return detectAvifEncode().then(function (ok) {
+			if (!ok) {
+				return null;
+			}
+			var qn = typeof q === 'number' && !isNaN(q) ? Math.min(1, Math.max(0.1, q)) : 0.85;
+			return canvasToBlob(canvasEl, 'image/avif', qn).then(
+				function (blob) {
+					return { blob: blob, mime: blob.type || 'image/avif' };
+				},
+				function () {
+					return canvasToBlob(canvasEl, 'image/avif', 0.5).then(
+						function (blob) {
+							return { blob: blob, mime: blob.type || 'image/avif' };
+						},
+						function () {
+							return canvasToBlob(canvasEl, 'image/avif').then(
+								function (blob) {
+									return { blob: blob, mime: blob.type || 'image/avif' };
+								},
+								function () {
+									return null;
+								}
+							);
+						}
+					);
+				}
+			);
+		});
+	}
+
+	/**
+	 * Native canvas WebP — quality ladder (dist build also uses WASM retries + this).
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @param {number} q 0–1
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function canvasToBlobWebpNative(canvasEl, q) {
+		return detectWebpEncode().then(function (ok) {
+			if (!ok) {
+				return null;
+			}
+			var qn = typeof q === 'number' && !isNaN(q) ? Math.min(1, Math.max(0.1, q)) : 0.85;
+			return canvasToBlob(canvasEl, 'image/webp', qn).then(
+				function (blob) {
+					return { blob: blob, mime: blob.type || 'image/webp' };
+				},
+				function () {
+					return canvasToBlob(canvasEl, 'image/webp', 0.5).then(
+						function (blob) {
+							return { blob: blob, mime: blob.type || 'image/webp' };
+						},
+						function () {
+							return canvasToBlob(canvasEl, 'image/webp').then(
+								function (blob) {
+									return { blob: blob, mime: blob.type || 'image/webp' };
+								},
+								function () {
+									return null;
+								}
+							);
+						}
+					);
+				}
+			);
+		});
+	}
+
+	/**
 	 * @param {string} mode
 	 * @param {boolean} hasAlpha
 	 * @param {boolean} preserve
@@ -435,18 +515,11 @@
 					if (wasm) {
 						return wasm;
 					}
-					return detectAvifEncode().then(function (ok) {
-						if (!ok) {
-							return next();
+					return canvasToBlobAvifNative(canvasEl, q).then(function (native) {
+						if (native) {
+							return native;
 						}
-						return canvasToBlob(canvasEl, 'image/avif', q).then(
-							function (blob) {
-								return { blob: blob, mime: blob.type || 'image/avif' };
-							},
-							function () {
-								return next();
-							}
-						);
+						return next();
 					});
 				});
 			}
@@ -455,18 +528,11 @@
 					if (wasm) {
 						return wasm;
 					}
-					return detectWebpEncode().then(function (ok) {
-						if (!ok) {
-							return next();
+					return canvasToBlobWebpNative(canvasEl, q).then(function (native) {
+						if (native) {
+							return native;
 						}
-						return canvasToBlob(canvasEl, 'image/webp', q).then(
-							function (blob) {
-								return { blob: blob, mime: blob.type || 'image/webp' };
-							},
-							function () {
-								return next();
-							}
-						);
+						return next();
 					});
 				});
 			}
@@ -990,12 +1056,13 @@
 			detectAvifEncode();
 			detectWebpEncode();
 		}
+		setTimeout(run, 0);
 		if (typeof requestIdleCallback === 'function') {
 			requestIdleCallback(
 				function () {
 					run();
 				},
-				{ timeout: 5000 }
+				{ timeout: 8000 }
 			);
 		} else {
 			setTimeout(run, 1);

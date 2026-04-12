@@ -43,6 +43,8 @@ final class Registry {
 			'process_frontend'      => true,
 			'process_admin'         => true,
 			'wasm_encoders'         => false,
+			'server_side_fallback'  => false,
+			'server_side_only'      => false,
 		];
 	}
 
@@ -91,6 +93,8 @@ final class Registry {
 		$out['process_frontend']      = ! empty($merged['process_frontend']);
 		$out['process_admin']         = ! empty($merged['process_admin']);
 		$out['wasm_encoders']         = ! empty($merged['wasm_encoders']);
+		$out['server_side_fallback']  = ! empty($merged['server_side_fallback']);
+		$out['server_side_only']      = ! empty($merged['server_side_only']);
 
 		$mode = isset($merged['format_mode']) ? (string) $merged['format_mode'] : 'auto';
 		$out['format_mode'] = in_array($mode, ['auto', 'webp', 'jpeg'], true) ? $mode : 'auto';

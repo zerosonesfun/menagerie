@@ -14,16 +14,6 @@ if (! defined('ABSPATH')) {
 }
 
 final class MetaHandler {
-	private const META_PROCESSED = '_menagerie_processed';
-
-	private const META_ORIGINAL_BYTES = '_menagerie_original_bytes';
-
-	private const META_OPTIMIZED_BYTES = '_menagerie_optimized_bytes';
-
-	private const META_MIME_OUT = '_menagerie_mime_out';
-
-	private const META_PROCESSED_AT = '_menagerie_processed_at';
-
 	public function register(): void {
 		add_action('add_attachment', [$this, 'on_add_attachment'], 10, 1);
 		add_action('rest_after_insert_attachment', [$this, 'on_rest_after_insert'], 10, 3);
@@ -72,7 +62,7 @@ final class MetaHandler {
 	}
 
 	private function apply_payload(int $attachment_id, string $raw): void {
-		if (get_post_meta($attachment_id, self::META_PROCESSED, true) === '1') {
+		if (get_post_meta($attachment_id, MetaKeys::PROCESSED, true) === '1') {
 			return;
 		}
 
@@ -98,10 +88,10 @@ final class MetaHandler {
 			$mime = 'application/octet-stream';
 		}
 
-		update_post_meta($attachment_id, self::META_PROCESSED, '1');
-		update_post_meta($attachment_id, self::META_ORIGINAL_BYTES, $original);
-		update_post_meta($attachment_id, self::META_OPTIMIZED_BYTES, $optimized);
-		update_post_meta($attachment_id, self::META_MIME_OUT, $mime);
-		update_post_meta($attachment_id, self::META_PROCESSED_AT, time());
+		update_post_meta($attachment_id, MetaKeys::PROCESSED, '1');
+		update_post_meta($attachment_id, MetaKeys::ORIGINAL_BYTES, $original);
+		update_post_meta($attachment_id, MetaKeys::OPTIMIZED_BYTES, $optimized);
+		update_post_meta($attachment_id, MetaKeys::MIME_OUT, $mime);
+		update_post_meta($attachment_id, MetaKeys::PROCESSED_AT, time());
 	}
 }

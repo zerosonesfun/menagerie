@@ -17,9 +17,12 @@ self.onmessage = async function (e) {
 		let ab;
 		if (format === 'image/webp') {
 			const { encode } = await import('@jsquash/webp');
+			/* method 2 / single pass: faster encode vs defaults, less likely to lose race before next fallback */
 			ab = await encode(imageData, {
 				quality: q,
 				alpha_quality: q,
+				method: 2,
+				pass: 1,
 			});
 		} else if (format === 'image/jpeg') {
 			const { encode } = await import('@jsquash/jpeg');
@@ -28,9 +31,11 @@ self.onmessage = async function (e) {
 			});
 		} else if (format === 'image/avif') {
 			const { encode } = await import('@jsquash/avif');
+			/* speed 10 = fastest libaom pass: shorter main-thread time, less likely to lose race before WebP fallback */
 			ab = await encode(imageData, {
 				quality: q,
 				qualityAlpha: q,
+				speed: 10,
 			});
 		} else {
 			self.postMessage({ ok: false, error: 'unsupported-format' });

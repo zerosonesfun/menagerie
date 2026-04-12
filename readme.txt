@@ -10,6 +10,8 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Client-side image optimization in the browser before upload. Safe fallbacks keep uploads working when optimization cannot run.
 
+Download size and visitors: Prefer no extra browser weight? Use *Server-side only* (and optional server-side fallback) in Settings → Menagerie. If you keep client-side optimization with *Advanced encoders (WebAssembly)* on, sticking to WebP typically adds on the order of ~0.2–0.5 MB to what the browser downloads for the codec path (plus a small main script). AVIF can require larger codec data—up to ~3.5 MB for the encoder in a worst case—but that loads only when someone uploads an image and the pipeline reaches AVIF; the browser caches it, so it is not a full repeat download every time. The optimizer runs only on pages where uploads are enabled (per your settings), not on every page view for every visitor. Client-side optimization is not a heavy download for casual browsing.
+
 == Description ==
 
 Menagerie by Billy Wilcosky (https://wilcosky.com) resizes and re-encodes images in the visitor’s browser before they reach your server. If anything fails—browser limits, timeouts, or unsupported formats—the original file is uploaded unchanged.
@@ -33,7 +35,7 @@ Menagerie by Billy Wilcosky (https://wilcosky.com) resizes and re-encodes images
 * For **Advanced encoders (WebAssembly)** to run in the browser, the Vite output must exist: `assets/js/dist/menagerie-optimizer.js` and its sibling `assets/` chunks. From the plugin directory run: `npm install` then `npm run build`. Commit the `assets/js/dist/` tree with your release.
 * The live script only turns **wasmEncoders** on in the browser when that bundle is present; otherwise the classic encoder path is used. If you save the setting without a build, an admin notice explains what is missing.
 * **Bulk uploads** (many images at once): WASM work is **queued** on a single worker so jobs do not overlap; combined with the existing upload queue, multi-file batches complete in order without corrupting encodes.
-* **Zipping for distribution** without `node_modules`: from the parent of the plugin folder you can run `scripts/make-zip.sh` (creates `menagerie-release.zip` next to the plugin folder, excluding `node_modules`). Or: `zip -r my-menagerie.zip menagerie -x "menagerie/node_modules/*"`. Do not ship `node_modules` to end users.
+* **Zipping for distribution** without `node_modules`: from inside the `menagerie` plugin folder, run `scripts/make-zip.sh` (creates `menagerie-release.zip` in the same directory that contains `menagerie`, excluding `node_modules`). Or: `zip -r my-menagerie.zip menagerie -x "menagerie/node_modules/*"`. Do not ship `node_modules` to end users.
 
 == Frequently Asked Questions ==
 
@@ -63,11 +65,31 @@ The browser encodes to sRGB via canvas, similar to other client-side tools. Very
 
 = What does “Advanced encoders (WebAssembly)” do? =
 
-Optional MozJPEG / WebP / AVIF encoders run in the browser (via the jSquash libraries) and often produce smaller or higher-quality files than the browser’s built-in canvas encoder at the same quality setting. The first encode may download codec data; very large AVIF codecs load only when AVIF output is attempted. Menagerie retries WASM AVIF once after a short delay if the first attempt returns empty (cold worker / module load), so WebP does not “win” only because AVIF was not ready yet. If anything fails, Menagerie falls back to the built-in encoder. The setting only activates WASM in the browser when `assets/js/dist/` is built and present—see **Building from source / releases** above.
+Optional MozJPEG / WebP / AVIF encoders run in the browser (via the jSquash libraries) and often produce smaller or higher-quality files than the browser’s built-in canvas encoder at the same quality setting. The first encode may download codec data; very large AVIF codecs load only when AVIF output is attempted. If anything fails, Menagerie falls back to the built-in encoder. The setting only activates WASM in the browser when `assets/js/dist/` is built and present—see **Building from source / releases** above.
+
+= How hard does Menagerie try to output AVIF and WebP? =
+
+With Advanced encoders on, AVIF and WebP each get several WASM attempts with short delays (cold WebAssembly load), faster encoder options where the libraries allow, prewarming both codecs in the worker after load, then the browser’s native canvas encoder with a quality ladder before moving to the next format. JPEG WASM does not use the same multi-retry pattern because the canvas JPEG path is usually reliable.
 
 = Do bulk or multi-file uploads work? =
 
 Yes. Uploads are processed in sequence so memory stays bounded, and WASM encodes are queued on one worker so concurrent jobs cannot clash—suitable for selecting many images in the Media Library or batch front-end uploads.
+
+= Can the server optimize an image that was already optimized in the browser? =
+
+Usually no: when the browser succeeds, Menagerie sends menagerie_meta and the attachment is marked so server-side fallback skips it. In rare cases—network loss, REST quirks, or a failed nonce—that meta never arrives, _menagerie_processed is not set, and server-side fallback may encode the file again. That is uncommon.
+
+= Server-side fallback: performance and timeouts =
+
+Server-side optimization runs during the upload request (decode, resize, encode, regenerate thumbnails). Very large originals on low PHP max_execution_time or memory limits can fail or time out; raising limits or uploading smaller sources helps. Async or background processing is not implemented yet.
+
+= Does server-side fallback prefer AVIF? =
+
+In Auto format mode, yes—the server uses the same order as the browser (AVIF, then WebP, then JPEG or PNG). You only get AVIF or WebP if PHP can encode that format (see Tools → Site Health → Info → Media handling). Menagerie attempts AVIF and WebP each twice before falling through. If the host cannot encode a format, the chain continues automatically.
+
+= Why would server-side optimization do nothing when both “Process uploads” options are off? =
+
+Settings requires at least one of “Process uploads in the admin” or “Process uploads on the front end” for any Menagerie processing—including server-side fallback. If both are unchecked, nothing runs; enable the context you use.
 
 = Why might the same image become AVIF in the admin but WebP on the front end? =
 
@@ -75,7 +97,8 @@ On the **front end**, file inputs are optimized once when you pick a file, then 
 
 == Screenshots ==
 
-1. Settings under Settings → Menagerie
+1. Media Library: uploading an image; success toast at the bottom right.
+2. Attachment details: optimized file shows AVIF type and a small file size.
 
 == Changelog ==
 

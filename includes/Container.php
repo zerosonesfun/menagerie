@@ -53,6 +53,11 @@ final class Container {
 			Upload\MetaHandler::class => static function (self $c): Upload\MetaHandler {
 				return new Upload\MetaHandler();
 			},
+			Upload\ServerFallbackOptimizer::class => static function (self $c): Upload\ServerFallbackOptimizer {
+				return new Upload\ServerFallbackOptimizer(
+					$c->get(Settings\Registry::class)
+				);
+			},
 			I18n::class => static function (self $c): I18n {
 				return new I18n();
 			},

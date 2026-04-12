@@ -20,6 +20,8 @@ final class AssetLoader {
 
 	private const STYLE_HANDLE = 'menagerie-toast';
 
+	private const SETTINGS_STYLE_HANDLE = 'menagerie-admin-settings';
+
 	public function __construct(
 		private Registry $registry
 	) {
@@ -50,6 +52,9 @@ final class AssetLoader {
 	 */
 	public function register_plupload_defaults(): void {
 		$settings = $this->registry->get();
+		if (! empty($settings['server_side_only'])) {
+			return;
+		}
 		if (empty($settings['enabled']) || empty($settings['process_admin'])) {
 			return;
 		}
@@ -72,8 +77,16 @@ final class AssetLoader {
 	}
 
 	public function enqueue_admin(): void {
+		if ($this->is_settings_page() && current_user_can('manage_options')) {
+			$this->enqueue_admin_settings_style();
+		}
+
 		$settings = $this->registry->get();
-		if (empty($settings['enabled'])) {
+		if (empty($settings['enabled']) && empty($settings['server_side_only'])) {
+			return;
+		}
+
+		if (! empty($settings['server_side_only'])) {
 			return;
 		}
 
@@ -98,7 +111,13 @@ final class AssetLoader {
 		}
 
 		$settings = $this->registry->get();
-		if (empty($settings['enabled']) || empty($settings['process_frontend'])) {
+		if (empty($settings['enabled']) && empty($settings['server_side_only'])) {
+			return;
+		}
+		if (! empty($settings['server_side_only'])) {
+			return;
+		}
+		if (empty($settings['process_frontend'])) {
 			return;
 		}
 
@@ -188,6 +207,7 @@ final class AssetLoader {
 			'processAdmin'  => ! empty($settings['process_admin']),
 			'processFrontend' => ! empty($settings['process_frontend']),
 			'wasmEncoders'  => ! empty($settings['wasm_encoders']) && $this->has_optimizer_dist_bundle(),
+			'serverSideOnly' => ! empty($settings['server_side_only']),
 			'uploadNonce'   => $upload_nonce,
 			'ajaxUrl'       => admin_url('admin-ajax.php'),
 			'restUrl'       => esc_url_raw(rest_url()),
@@ -222,6 +242,19 @@ final class AssetLoader {
 
 	private function is_settings_page(): bool {
 		return isset($_GET['page']) && (string) $_GET['page'] === 'menagerie';
+	}
+
+	private function enqueue_admin_settings_style(): void {
+		$path = MENAGERIE_PATH . 'assets/css/menagerie-admin-settings.css';
+		if (! is_readable($path)) {
+			return;
+		}
+		wp_enqueue_style(
+			self::SETTINGS_STYLE_HANDLE,
+			MENAGERIE_URL . 'assets/css/menagerie-admin-settings.css',
+			[],
+			(string) filemtime($path)
+		);
 	}
 
 	private function should_load_admin_uploader(): bool {

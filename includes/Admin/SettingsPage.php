@@ -95,6 +95,18 @@ final class SettingsPage {
 			$settings
 		);
 		$this->checkbox_row('convert_when_useful', __('Convert when useful', 'menagerie'), __('Skip re-encoding when the image is already small enough.', 'menagerie'), $settings);
+		$this->checkbox_row(
+			'server_side_fallback',
+			__('Server-side fallback (last resort)', 'menagerie'),
+			__('When the browser cannot optimize an image, try again on the server using the same format order and quality settings as above (Auto tries AVIF first, then WebP, then JPEG or PNG). Requires PHP GD or ImageMagick to support each output format—see Tools → Site Health → Info → Media handling. AVIF encoding needs a recent WordPress and either GD with AVIF enabled or Imagick with libavif; if AVIF is not available, the next format in the chain is used. Menagerie runs AVIF and WebP each twice on failure before falling through, similar to the browser path.', 'menagerie'),
+			$settings
+		);
+		$this->checkbox_row(
+			'server_side_only',
+			__('Server-side only (test or permanent)', 'menagerie'),
+			__('Skip browser optimization and upload originals so images are handled on the server only (same format order and quality as your Menagerie settings). Use this to verify server-side processing, or leave it on if you want a server-only workflow. You can turn off “Enable client-side optimization” above and leave this on so uploads are still optimized on the server. Admin and front-end uploads behave the same: the optimizer script does not load in the browser.', 'menagerie'),
+			$settings
+		);
 		$this->checkbox_row('preserve_transparency', __('Preserve transparency when possible', 'menagerie'), __('When off, transparent images may be flattened for JPEG.', 'menagerie'), $settings);
 		$this->checkbox_row('show_toasts', __('Show toast notifications', 'menagerie'), __('Brief status messages during optimization.', 'menagerie'), $settings);
 
@@ -130,6 +142,12 @@ final class SettingsPage {
 		$this->checkbox_row('detect_conflicts', __('Detect other optimization plugins', 'menagerie'), __('Show notices when similar plugins are active.', 'menagerie'), $settings);
 		$this->checkbox_row('process_admin', __('Process uploads in the admin', 'menagerie'), __('Media Library, block editor, and admin file inputs.', 'menagerie'), $settings);
 		$this->checkbox_row('process_frontend', __('Process uploads on the front end', 'menagerie'), __('Public forms and file inputs (when safe to intercept).', 'menagerie'), $settings);
+		echo '<tr><td></td><td><p class="description">';
+		echo esc_html__(
+			'If both options above are off, Menagerie does not run in the browser or on the server for uploads (including server-side fallback). Enable at least one location when testing or using server-side optimization.',
+			'menagerie'
+		);
+		echo '</p></td></tr>';
 
 		echo '</table>';
 		submit_button(__('Save Changes', 'menagerie'));
@@ -140,11 +158,16 @@ final class SettingsPage {
 	 * @param array<string, mixed> $settings
 	 */
 	private function checkbox_row(string $key, string $label, string $description, array $settings): void {
-		$name  = Registry::OPTION_NAME . '[' . $key . ']';
+		$name    = Registry::OPTION_NAME . '[' . $key . ']';
 		$checked = ! empty($settings[ $key ]);
 		echo '<tr><th scope="row">' . esc_html($label) . '</th><td>';
+		/*
+		 * Unchecked boxes are omitted from POST; without a paired hidden, sanitize()
+		 * merges with the previous option and the old value sticks.
+		 */
 		printf(
-			'<label><input type="checkbox" name="%s" value="1" %s /> %s</label>',
+			'<input type="hidden" name="%1$s" value="0" />' .
+			'<label><input type="checkbox" name="%1$s" value="1" %2$s /> %3$s</label>',
 			esc_attr($name),
 			checked($checked, true, false),
 			esc_html($description)

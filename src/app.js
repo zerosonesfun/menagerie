@@ -31,6 +31,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 	 * @property {string} [uploadNonce]
 	 * @property {Object} [strings]
 	 * @property {boolean} [wasmEncoders]
+	 * @property {boolean} [serverSideOnly]
 	 */
 
 	function str(key, fallback) {
@@ -42,6 +43,9 @@ import { encodeInWorker } from './wasm-bridge.js';
 
 	function contextAllowed() {
 		if (!C.enabled) {
+			return false;
+		}
+		if (C.serverSideOnly) {
 			return false;
 		}
 		if (C.context === 'admin' && !C.processAdmin) {
@@ -419,6 +423,137 @@ import { encodeInWorker } from './wasm-bridge.js';
 		});
 	}
 
+	/** Cold codec load: shared delays between WASM retries (large WASM fetch/compile in the worker). */
+	var WASM_CODEC_RETRY_DELAYS_MS = [150, 400, 800, 1200];
+
+	/**
+	 * Several WASM attempts so AVIF is less likely to lose to WebP on first cold load.
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function tryWasmAvifWithRetries(canvasEl) {
+		if (!C.wasmEncoders) {
+			return Promise.resolve(null);
+		}
+		function attempt(failIndex) {
+			return tryWasmEncode(canvasEl, 'image/avif').then(function (w) {
+				if (w) {
+					return w;
+				}
+				if (failIndex >= WASM_CODEC_RETRY_DELAYS_MS.length) {
+					return null;
+				}
+				return delay(WASM_CODEC_RETRY_DELAYS_MS[failIndex]).then(function () {
+					return attempt(failIndex + 1);
+				});
+			});
+		}
+		return attempt(0);
+	}
+
+	/**
+	 * Same retry pattern for WebP WASM (cold @jsquash/webp load).
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function tryWasmWebpWithRetries(canvasEl) {
+		if (!C.wasmEncoders) {
+			return Promise.resolve(null);
+		}
+		function attempt(failIndex) {
+			return tryWasmEncode(canvasEl, 'image/webp').then(function (w) {
+				if (w) {
+					return w;
+				}
+				if (failIndex >= WASM_CODEC_RETRY_DELAYS_MS.length) {
+					return null;
+				}
+				return delay(WASM_CODEC_RETRY_DELAYS_MS[failIndex]).then(function () {
+					return attempt(failIndex + 1);
+				});
+			});
+		}
+		return attempt(0);
+	}
+
+	/**
+	 * Native canvas AVIF — quality ladder then type-only, for browsers that encode AVIF but not via WASM.
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @param {number} q 0–1
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function canvasToBlobAvifNative(canvasEl, q) {
+		return detectAvifEncode().then(function (ok) {
+			if (!ok) {
+				return null;
+			}
+			var qn = typeof q === 'number' && !isNaN(q) ? Math.min(1, Math.max(0.1, q)) : 0.85;
+			return canvasToBlob(canvasEl, 'image/avif', qn).then(
+				function (blob) {
+					return { blob: blob, mime: blob.type || 'image/avif' };
+				},
+				function () {
+					return canvasToBlob(canvasEl, 'image/avif', 0.5).then(
+						function (blob) {
+							return { blob: blob, mime: blob.type || 'image/avif' };
+						},
+						function () {
+							return canvasToBlob(canvasEl, 'image/avif').then(
+								function (blob) {
+									return { blob: blob, mime: blob.type || 'image/avif' };
+								},
+								function () {
+									return null;
+								}
+							);
+						}
+					);
+				}
+			);
+		});
+	}
+
+	/**
+	 * Native canvas WebP — quality ladder then type-only (browsers vary on which quality they accept).
+	 *
+	 * @param {HTMLCanvasElement} canvasEl
+	 * @param {number} q 0–1
+	 * @returns {Promise<{blob: Blob, mime: string}|null>}
+	 */
+	function canvasToBlobWebpNative(canvasEl, q) {
+		return detectWebpEncode().then(function (ok) {
+			if (!ok) {
+				return null;
+			}
+			var qn = typeof q === 'number' && !isNaN(q) ? Math.min(1, Math.max(0.1, q)) : 0.85;
+			return canvasToBlob(canvasEl, 'image/webp', qn).then(
+				function (blob) {
+					return { blob: blob, mime: blob.type || 'image/webp' };
+				},
+				function () {
+					return canvasToBlob(canvasEl, 'image/webp', 0.5).then(
+						function (blob) {
+							return { blob: blob, mime: blob.type || 'image/webp' };
+						},
+						function () {
+							return canvasToBlob(canvasEl, 'image/webp').then(
+								function (blob) {
+									return { blob: blob, mime: blob.type || 'image/webp' };
+								},
+								function () {
+									return null;
+								}
+							);
+						}
+					);
+				}
+			);
+		});
+	}
+
 	/**
 	 * @param {string} mode
 	 * @param {boolean} hasAlpha
@@ -476,66 +611,28 @@ import { encodeInWorker } from './wasm-bridge.js';
 				});
 			}
 			if (mime === 'image/avif') {
-				function tryAvifWasm() {
-					return tryWasmEncode(canvasEl, 'image/avif');
-				}
-				return tryAvifWasm().then(function (wasm) {
+				return tryWasmAvifWithRetries(canvasEl).then(function (wasm) {
 					if (wasm) {
 						return wasm;
 					}
-					/* First WASM call can return null while @jsquash/avif loads in the worker; WebP WASM is smaller and wins next if we do not retry. */
-					if (C.wasmEncoders) {
-						return delay(150).then(tryAvifWasm).then(function (wasm2) {
-							if (wasm2) {
-								return wasm2;
-							}
-							return detectAvifEncode().then(function (ok) {
-								if (!ok) {
-									return next();
-								}
-								return canvasToBlob(canvasEl, 'image/avif', q).then(
-									function (blob) {
-										return { blob: blob, mime: blob.type || 'image/avif' };
-									},
-									function () {
-										return next();
-									}
-								);
-							});
-						});
-					}
-					return detectAvifEncode().then(function (ok) {
-						if (!ok) {
-							return next();
+					return canvasToBlobAvifNative(canvasEl, q).then(function (native) {
+						if (native) {
+							return native;
 						}
-						return canvasToBlob(canvasEl, 'image/avif', q).then(
-							function (blob) {
-								return { blob: blob, mime: blob.type || 'image/avif' };
-							},
-							function () {
-								return next();
-							}
-						);
+						return next();
 					});
 				});
 			}
 			if (mime === 'image/webp') {
-				return tryWasmEncode(canvasEl, 'image/webp').then(function (wasm) {
+				return tryWasmWebpWithRetries(canvasEl).then(function (wasm) {
 					if (wasm) {
 						return wasm;
 					}
-					return detectWebpEncode().then(function (ok) {
-						if (!ok) {
-							return next();
+					return canvasToBlobWebpNative(canvasEl, q).then(function (native) {
+						if (native) {
+							return native;
 						}
-						return canvasToBlob(canvasEl, 'image/webp', q).then(
-							function (blob) {
-								return { blob: blob, mime: blob.type || 'image/webp' };
-							},
-							function () {
-								return next();
-							}
-						);
+						return next();
 					});
 				});
 			}
@@ -1050,7 +1147,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 
 	/**
 	 * Warm native encode probes and (when WASM is on) the encode worker so the first user upload
-	 * is less likely to lose AVIF to WebP on a cold start.
+	 * is less likely to lose AVIF/WebP to the next format on a cold start.
 	 */
 	function scheduleEncoderPrewarm() {
 		if (typeof document === 'undefined' || !document.createElement) {
@@ -1063,27 +1160,38 @@ import { encodeInWorker } from './wasm-bridge.js';
 				return;
 			}
 			var c = document.createElement('canvas');
-			c.width = 2;
-			c.height = 2;
+			c.width = 4;
+			c.height = 4;
 			var ctx = c.getContext('2d');
 			if (!ctx) {
 				return;
 			}
 			var id;
 			try {
-				id = ctx.getImageData(0, 0, 2, 2);
+				id = ctx.getImageData(0, 0, 4, 4);
 			} catch (e) {
 				return;
 			}
 			var q = getQualityPercent();
-			encodeInWorker(id, 'image/avif', q).catch(function () {});
+			encodeInWorker(id, 'image/avif', q)
+				.catch(function () {})
+				.then(function () {
+					var idW;
+					try {
+						idW = ctx.getImageData(0, 0, 4, 4);
+					} catch (e2) {
+						return;
+					}
+					return encodeInWorker(idW, 'image/webp', q).catch(function () {});
+				});
 		}
+		setTimeout(run, 0);
 		if (typeof requestIdleCallback === 'function') {
 			requestIdleCallback(
 				function () {
 					run();
 				},
-				{ timeout: 5000 }
+				{ timeout: 8000 }
 			);
 		} else {
 			setTimeout(run, 1);

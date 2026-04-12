@@ -38,6 +38,9 @@ final class Plugin {
 		$meta = $this->container->get(Upload\MetaHandler::class);
 		add_action('init', [$meta, 'register']);
 
+		$server_fallback = $this->container->get(Upload\ServerFallbackOptimizer::class);
+		add_action('init', [$server_fallback, 'register']);
+
 		add_action(
 			'update_option_' . Settings\Registry::OPTION_NAME,
 			static function (): void {
