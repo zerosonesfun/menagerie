@@ -1,5 +1,5 @@
 === Menagerie ===
-Contributors: billywilcosky
+Contributors: wilcosky
 Tags: images, optimization, performance, upload, webp, avif
 Requires at least: 6.9
 Tested up to: 7.0
