@@ -1,0 +1,22 @@
+{
+  "name": "menagerie",
+  "version": "1.0.0",
+  "description": "Menagerie WordPress plugin — front-end build for optimizer script",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^8.0.8"
+  },
+  "dependencies": {
+    "@jsquash/avif": "^2.1.1",
+    "@jsquash/jpeg": "^1.6.0",
+    "@jsquash/webp": "^1.5.0"
+  }
+}
