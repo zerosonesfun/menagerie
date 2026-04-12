@@ -35,7 +35,7 @@ Menagerie by Billy Wilcosky (https://wilcosky.com) resizes and re-encodes images
 * For **Advanced encoders (WebAssembly)** to run in the browser, the Vite output must exist: `assets/js/dist/menagerie-optimizer.js` and its sibling `assets/` chunks. From the plugin directory run: `npm install` then `npm run build`. Commit the `assets/js/dist/` tree with your release.
 * The live script only turns **wasmEncoders** on in the browser when that bundle is present; otherwise the classic encoder path is used. If you save the setting without a build, an admin notice explains what is missing.
 * **Bulk uploads** (many images at once): WASM work is **queued** on a single worker so jobs do not overlap; combined with the existing upload queue, multi-file batches complete in order without corrupting encodes.
-* **Zipping for distribution** without `node_modules`: from inside the `menagerie` plugin folder, run `scripts/make-zip.sh` (creates `menagerie-release.zip` in the same directory that contains `menagerie`, excluding `node_modules`). Or: `zip -r my-menagerie.zip menagerie -x "menagerie/node_modules/*"`. Do not ship `node_modules` to end users.
+* Do not ship `node_modules` to end users.
 
 == Frequently Asked Questions ==
 
