@@ -1,6 +1,6 @@
 # Menagerie
 
-**Contributors:** billywilcosky  
+**Contributors:** zerosonesfun (Billy Wilcosky)
 **Tags:** images, optimization, performance, upload, webp, avif  
 **Requires WordPress:** 6.9+  
 **Tested up to:** 7.0  
