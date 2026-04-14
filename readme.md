@@ -1,7 +1,6 @@
 # Menagerie
 
-**Contributors:** zerosonesfun (Billy Wilcosky)
-
+**Contributors:** billywilcosky  
 **Tags:** images, optimization, performance, upload, webp, avif  
 **Requires WordPress:** 6.9+  
 **Tested up to:** 7.0  
@@ -36,7 +35,7 @@ Menagerie by [Billy Wilcosky](https://wilcosky.com) resizes and re-encodes image
 - For **Advanced encoders (WebAssembly)** to run, the Vite build must be present: `assets/js/dist/menagerie-optimizer.js` plus the generated `assets/` chunks beside it. From the plugin directory run `npm install` then `npm run build`, and commit `assets/js/dist/` with your release.
 - The browser only receives `wasmEncoders: true` when that bundle exists; otherwise the classic script path is used and behavior matches “WASM off.” If you enable the setting without running the build, a **Settings** notice explains that `dist/` is missing.
 - **Bulk uploads**: WASM encodes are **serialized** on one worker queue so overlapping jobs cannot corrupt output; together with the existing sequential optimization queue, many-file batches are handled safely.
-- Do not distribute `node_modules` to end users.
+- **Zipping without `node_modules`**: run `scripts/make-zip.sh` from the plugin directory (it writes `menagerie-release.zip` next to the `menagerie` folder—same parent directory—excluding `node_modules`). Or manually: `zip -r my-menagerie.zip menagerie -x "menagerie/node_modules/*"`. Do not distribute `node_modules` to end users.
 
 ## Frequently asked questions
 
@@ -68,11 +67,23 @@ The browser encodes to sRGB via canvas, similar to other client-side tools. Very
 
 Optional MozJPEG, WebP, and AVIF encoders run in the browser (via the [jSquash](https://github.com/jamsinclair/jSquash) libraries) and often produce smaller or higher-quality files than the browser’s built-in canvas encoder at the same quality setting. The first encode may download codec data; large AVIF codecs load only when AVIF output is attempted. If anything fails, Menagerie falls back to the built-in encoder.
 
+If a host or CDN serves `.wasm` with the wrong MIME type, Menagerie applies a compatibility path so uploads still optimize without hard failure. Correct `application/wasm` is still recommended for best startup behavior.
+
 ### How hard does Menagerie try to output AVIF and WebP?
 
 With Advanced encoders on, Menagerie gives **both** codecs the same strategy: several WASM attempts with short delays (cold WebAssembly load), faster encoder options where the libraries allow (AVIF speed, WebP method/pass), prewarming **both** codecs in the worker after page load, then the browser’s native `canvas` encoder with a **quality ladder** (and type-only) before moving to the next format in the chain. JPEG/MozJPEG in WASM does not use the same multi-retry ladder because the canvas JPEG path is cheap and reliable.
 
 WASM is only activated when the built bundle exists under `assets/js/dist/`—see **Building from source / releases**. See `THIRD-PARTY-LICENSES.md` for codec licenses.
+
+### How do I verify WebAssembly MIME type?
+
+In browser DevTools, open **Network**, filter by `wasm`, click a `.wasm` request, and check **Response Headers**. `Content-Type` should be `application/wasm`.
+
+Common host rules:
+
+- Apache / LiteSpeed (`.htaccess`): `AddType application/wasm .wasm`
+- Nginx: `types { application/wasm wasm; }`
+- Cloudflare/CDN: preserve origin `Content-Type` for `.wasm` files (avoid cache rules that rewrite to `text/plain`/`application/octet-stream`)
 
 ### Do bulk or multi-file uploads work?
 

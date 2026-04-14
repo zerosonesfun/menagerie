@@ -313,13 +313,34 @@ import { encodeInWorker } from './wasm-bridge.js';
 		}
 	}
 
+	/**
+	 * Request a 2D context, preferring readback-friendly mode when needed.
+	 *
+	 * @param {HTMLCanvasElement} canvas
+	 * @param {boolean} forReadback
+	 * @returns {CanvasRenderingContext2D|null}
+	 */
+	function get2dContext(canvas, forReadback) {
+		if (!canvas || typeof canvas.getContext !== 'function') {
+			return null;
+		}
+		if (forReadback) {
+			try {
+				return canvas.getContext('2d', { willReadFrequently: true });
+			} catch (e) {
+				/* ignore and fall back */
+			}
+		}
+		return canvas.getContext('2d');
+	}
+
 	function bitmapToCanvas(bitmap) {
 		var w = bitmap.width;
 		var h = bitmap.height;
 		var canvas = document.createElement('canvas');
 		canvas.width = w;
 		canvas.height = h;
-		var ctx = canvas.getContext('2d');
+		var ctx = get2dContext(canvas, false);
 		if (!ctx) {
 			throw new Error('2d');
 		}
@@ -402,7 +423,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 		if (mime !== 'image/webp' && mime !== 'image/jpeg' && mime !== 'image/avif') {
 			return Promise.resolve(null);
 		}
-		var ctx = canvasEl.getContext('2d');
+		var ctx = get2dContext(canvasEl, true);
 		if (!ctx) {
 			return Promise.resolve(null);
 		}
@@ -657,7 +678,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 		var flat = document.createElement('canvas');
 		flat.width = source.width;
 		flat.height = source.height;
-		var f = flat.getContext('2d');
+		var f = get2dContext(flat, false);
 		if (!f) {
 			return source;
 		}
@@ -693,7 +714,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 				var out = document.createElement('canvas');
 				out.width = nw;
 				out.height = nh;
-				var octx = out.getContext('2d');
+				var octx = get2dContext(out, true);
 				if (!octx) {
 					throw new Error('2d');
 				}
@@ -1162,7 +1183,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 			var c = document.createElement('canvas');
 			c.width = 4;
 			c.height = 4;
-			var ctx = c.getContext('2d');
+			var ctx = get2dContext(c, true);
 			if (!ctx) {
 				return;
 			}

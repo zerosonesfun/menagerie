@@ -3,6 +3,24 @@
  *
  * @package Menagerie
  */
+if (
+	typeof WebAssembly !== 'undefined' &&
+	typeof WebAssembly.instantiateStreaming === 'function'
+) {
+	const nativeInstantiateStreaming = WebAssembly.instantiateStreaming.bind(WebAssembly);
+	WebAssembly.instantiateStreaming = async function (source, importObject) {
+		const response = await source;
+		if (typeof Response !== 'undefined' && response instanceof Response) {
+			const contentType = String(response.headers.get('content-type') || '');
+			if (!contentType.toLowerCase().includes('application/wasm')) {
+				const bytes = await response.arrayBuffer();
+				return WebAssembly.instantiate(bytes, importObject);
+			}
+		}
+		return nativeInstantiateStreaming(Promise.resolve(response), importObject);
+	};
+}
+
 self.onmessage = async function (e) {
 	const msg = e.data;
 	if (!msg || msg.type !== 'menagerie-encode') {
