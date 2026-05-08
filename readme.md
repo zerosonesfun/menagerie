@@ -6,7 +6,7 @@
 **Requires WordPress:** 6.9+  
 **Tested up to:** 7.0  
 **Requires PHP:** 8.0+  
-**Stable tag:** 1.0.0  
+**Stable tag:** 1.0.1  
 **License:** [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html)
 
 Client-side image optimization in the browser before upload. Safe fallbacks keep uploads working when optimization cannot run.

@@ -1,6 +1,6 @@
 {
   "name": "menagerie",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Menagerie WordPress plugin — front-end build for optimizer script",
   "private": true,
   "main": "index.js",

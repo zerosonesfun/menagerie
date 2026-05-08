@@ -29,7 +29,7 @@ final class Plugin {
 		add_action('admin_menu', [$settings, 'register']);
 
 		$notices = $this->container->get(Admin\Notices::class);
-		add_action('admin_notices', [$notices, 'render']);
+		$notices->register();
 
 		$assets = $this->container->get(Assets\AssetLoader::class);
 		add_action('admin_enqueue_scripts', [$assets, 'enqueue_admin']);
