@@ -3,7 +3,7 @@
  * Plugin Name:       Menagerie
  * Plugin URI:        https://wilcosky.com
  * Description:       Client-side image optimization in the browser before upload. Safe fallbacks preserve your original files.
- * Version:           1.0.1
+ * Version:           1.0.3
  * Requires at least: 6.9
  * Requires PHP:      8.0
  * Author:            Billy Wilcosky
@@ -24,7 +24,7 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-define('MENAGERIE_VERSION', '1.0.1');
+define('MENAGERIE_VERSION', '1.0.3');
 define('MENAGERIE_FILE', __FILE__);
 define('MENAGERIE_PATH', plugin_dir_path(__FILE__));
 define('MENAGERIE_URL', plugin_dir_url(__FILE__));
