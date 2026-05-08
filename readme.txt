@@ -101,6 +101,9 @@ On the **front end**, file inputs are optimized once when you pick a file, then 
 
 == Changelog ==
 
+= 1.0.3 =
+* Ability to hide plugin conflict banner in admin longer
+
 = 1.0.2 =
 * Fix MIME type wasm error
 
