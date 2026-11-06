@@ -1,0 +1,9 @@
+/**
+ * Menagerie — Settings screen (Settings → Menagerie).
+ *
+ * @package Menagerie
+ */
+
+.menagerie-settings-wrap .form-table th {
+	padding: 20px 10px 20px 10px;
+}

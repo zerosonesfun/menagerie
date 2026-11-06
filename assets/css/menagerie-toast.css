@@ -1,0 +1,227 @@
+/**
+ * Menagerie toast notifications — scoped, light/dark, reduced motion.
+ *
+ * @package Menagerie
+ */
+
+/*
+ * z-index: max for legacy stacks.
+ * popover="manual" + showPopover() (JS) uses the CSS top layer — above <dialog>,
+ * other popovers, and most z-index stacks (Quill modals, etc.).
+ * !important beats theme utilities (e.g. sticky “back to top” with z-index + !important).
+ */
+.menagerie-toast-host {
+	--menagerie-toast-inset: 1rem;
+	position: fixed !important;
+	right: var(--menagerie-toast-inset);
+	bottom: var(--menagerie-toast-inset);
+	left: auto;
+	top: auto;
+	z-index: 2147483647 !important;
+	isolation: isolate;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.5rem;
+	width: max-content;
+	max-width: min(22rem, calc(100vw - 2rem));
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: transparent;
+	box-shadow: none;
+	color: inherit;
+	overflow: visible;
+	pointer-events: none;
+}
+
+.menagerie-toast-host:popover-open {
+	/* Pin to corner; UA popover styles can otherwise center the box. */
+	position: fixed !important;
+	right: var(--menagerie-toast-inset);
+	bottom: var(--menagerie-toast-inset);
+	left: auto;
+	top: auto;
+	z-index: 2147483647 !important;
+}
+
+.menagerie-toast-host::backdrop {
+	display: none;
+}
+
+.menagerie-toast-host * {
+	pointer-events: auto;
+}
+
+.menagerie-toast {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0.75rem 2.5rem 0.75rem 0.875rem;
+	border-radius: 4px;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	background: #fff;
+	color: #1d2327;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+	font-size: 13px;
+	line-height: 1.45;
+	position: relative;
+	/* Stack above siblings inside the host (e.g. overlapping corner UI). */
+	z-index: 1;
+	/* Isolate from theme typography on nested nodes. */
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	font-weight: 400;
+	font-style: normal;
+	text-align: left;
+}
+
+@media (prefers-color-scheme: dark) {
+	.menagerie-toast {
+		background: #2c3338;
+		color: #f0f0f1;
+		border-color: rgba(255, 255, 255, 0.12);
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+	}
+}
+
+body.admin-color-light .menagerie-toast,
+body.wp-admin .menagerie-toast {
+	border-color: #c3c4c7;
+}
+
+body.wp-admin.folded .menagerie-toast {
+	/* stays bottom-right */
+}
+
+.menagerie-toast__text {
+	margin: 0;
+	padding: 0;
+	font: inherit;
+	line-height: inherit;
+	color: inherit;
+}
+
+.menagerie-toast__status {
+	display: inline-block;
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 50%;
+	margin-right: 0.35rem;
+	vertical-align: 0.1em;
+	background: #787c82;
+}
+
+.menagerie-toast--info .menagerie-toast__status {
+	background: #2271b1;
+}
+
+.menagerie-toast--success .menagerie-toast__status {
+	background: #00a32a;
+}
+
+.menagerie-toast--subtle .menagerie-toast__status {
+	background: #787c82;
+}
+
+/*
+ * Close control: themes often set global `button` rules (huge min-height, padding,
+ * pseudo-icons, rem font-size). Use host + toast + element chain and fixed box metrics.
+ */
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss,
+.menagerie-toast button.menagerie-toast__dismiss {
+	appearance: none !important;
+	-webkit-appearance: none !important;
+	position: absolute !important;
+	/* Beat theme `inset` shorthand on buttons, then pin the corner. */
+	inset: unset !important;
+	top: 0.35rem !important;
+	right: 0.35rem !important;
+	left: auto !important;
+	bottom: auto !important;
+	box-sizing: border-box !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	flex: 0 0 auto !important;
+	/* Fixed square — not min-* only (themes inflate min-height). */
+	width: 1.75rem !important;
+	height: 1.75rem !important;
+	min-width: 1.75rem !important;
+	min-height: 1.75rem !important;
+	max-width: 1.75rem !important;
+	max-height: 1.75rem !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 2px !important;
+	background: transparent !important;
+	background-image: none !important;
+	box-shadow: none !important;
+	color: inherit !important;
+	cursor: pointer !important;
+	/* Explicit glyph size (not inherited theme button font). */
+	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+	font-size: 1.125rem !important;
+	font-weight: 400 !important;
+	font-style: normal !important;
+	line-height: 1 !important;
+	text-align: center !important;
+	text-decoration: none !important;
+	text-transform: none !important;
+	letter-spacing: 0 !important;
+	vertical-align: middle !important;
+	float: none !important;
+	clear: none !important;
+	transform: none !important;
+	filter: none !important;
+	overflow: visible !important;
+}
+
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss::before,
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss::after,
+.menagerie-toast button.menagerie-toast__dismiss::before,
+.menagerie-toast button.menagerie-toast__dismiss::after {
+	content: none !important;
+	display: none !important;
+}
+
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss:hover,
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss:focus-visible,
+.menagerie-toast-host .menagerie-toast button.menagerie-toast__dismiss:active,
+.menagerie-toast button.menagerie-toast__dismiss:hover,
+.menagerie-toast button.menagerie-toast__dismiss:focus-visible,
+.menagerie-toast button.menagerie-toast__dismiss:active {
+	outline: 2px solid currentColor !important;
+	outline-offset: 2px !important;
+	box-shadow: none !important;
+	background: transparent !important;
+	background-image: none !important;
+	border: 0 !important;
+	color: inherit !important;
+	width: 1.75rem !important;
+	height: 1.75rem !important;
+	min-width: 1.75rem !important;
+	min-height: 1.75rem !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.menagerie-toast {
+		transition: none;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.menagerie-toast {
+		animation: menagerie-toast-in 0.2s ease-out;
+	}
+
+	@keyframes menagerie-toast-in {
+		from {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+}
