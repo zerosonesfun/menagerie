@@ -1,6 +1,6 @@
 <?php
 /**
- * AJAX handlers for Tools → Image Convertor.
+ * AJAX handlers for Tools → Image Converter.
  *
  * @package Menagerie
  */
@@ -16,7 +16,7 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-final class ImageConvertorAjax {
+final class ImageConverterAjax {
 	public const NONCE_ACTION = 'menagerie_image_convert';
 
 	public const BATCH_SIZE = 5;
@@ -156,7 +156,7 @@ final class ImageConvertorAjax {
 	}
 
 	private function guard(): void {
-		if (! current_user_can(ImageConvertorPage::CAPABILITY)) {
+		if (! current_user_can(ImageConverterPage::CAPABILITY)) {
 			wp_send_json_error([ 'message' => 'forbidden' ], 403);
 		}
 		check_ajax_referer(self::NONCE_ACTION, 'nonce');

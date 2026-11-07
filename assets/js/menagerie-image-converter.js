@@ -1,28 +1,28 @@
 /**
- * Menagerie — Tools → Image Convertor (batched AJAX).
+ * Menagerie — Tools → Image Converter (batched AJAX).
  *
  * @package Menagerie
  */
 (function () {
 	'use strict';
 
-	var cfg = window.MenagerieConvertor || {};
-	var form = document.getElementById('menagerie-image-convertor-form');
+	var cfg = window.MenagerieConverter || {};
+	var form = document.getElementById('menagerie-image-converter-form');
 	if (!form || !cfg.ajaxUrl) {
 		return;
 	}
 
 	var submitBtn = document.getElementById('menagerie-convert-submit');
 	var targetSelect = document.getElementById('menagerie-convert-target');
-	var progressWrap = document.getElementById('menagerie-convertor-progress');
+	var progressWrap = document.getElementById('menagerie-converter-progress');
 	var progressTrack = progressWrap
-		? progressWrap.querySelector('.menagerie-convertor-progress__track')
+		? progressWrap.querySelector('.menagerie-converter-progress__track')
 		: null;
 	var progressBar = progressWrap
-		? progressWrap.querySelector('.menagerie-convertor-progress__bar')
+		? progressWrap.querySelector('.menagerie-converter-progress__bar')
 		: null;
-	var statusEl = document.getElementById('menagerie-convertor-status');
-	var summaryEl = document.getElementById('menagerie-convertor-summary');
+	var statusEl = document.getElementById('menagerie-converter-status');
+	var summaryEl = document.getElementById('menagerie-converter-summary');
 
 	var str = function (key, fallback) {
 		if (cfg.strings && cfg.strings[key]) {
@@ -109,7 +109,7 @@
 		summaryEl.appendChild(heading);
 
 		var list = document.createElement('ul');
-		list.className = 'menagerie-convertor-summary__counts';
+		list.className = 'menagerie-converter-summary__counts';
 		[
 			['summaryConverted', totals.converted],
 			['summarySkipped', totals.skipped],
@@ -127,7 +127,7 @@
 			summaryEl.appendChild(failHeading);
 
 			var failList = document.createElement('ul');
-			failList.className = 'menagerie-convertor-summary__failures';
+			failList.className = 'menagerie-converter-summary__failures';
 			var maxShow = 25;
 			totals.failed.slice(0, maxShow).forEach(function (f) {
 				var li = document.createElement('li');

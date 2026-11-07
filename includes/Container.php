@@ -68,13 +68,13 @@ final class Container {
 					$c->get(Upload\ImageEncoder::class)
 				);
 			},
-			Admin\ImageConvertorPage::class => static function (self $c): Admin\ImageConvertorPage {
-				return new Admin\ImageConvertorPage(
+			Admin\ImageConverterPage::class => static function (self $c): Admin\ImageConverterPage {
+				return new Admin\ImageConverterPage(
 					$c->get(Upload\ImageEncoder::class)
 				);
 			},
-			Admin\ImageConvertorAjax::class => static function (self $c): Admin\ImageConvertorAjax {
-				return new Admin\ImageConvertorAjax(
+			Admin\ImageConverterAjax::class => static function (self $c): Admin\ImageConverterAjax {
+				return new Admin\ImageConverterAjax(
 					$c->get(Upload\ImageEncoder::class),
 					$c->get(Upload\LibraryConverter::class)
 				);

@@ -29,11 +29,11 @@ final class Plugin {
 		$settings = $this->container->get(Admin\SettingsPage::class);
 		add_action('admin_menu', [$settings, 'register']);
 
-		$convertor = $this->container->get(Admin\ImageConvertorPage::class);
-		add_action('admin_menu', [$convertor, 'register']);
+		$converter = $this->container->get(Admin\ImageConverterPage::class);
+		add_action('admin_menu', [$converter, 'register']);
 
-		$convertor_ajax = $this->container->get(Admin\ImageConvertorAjax::class);
-		$convertor_ajax->register();
+		$converter_ajax = $this->container->get(Admin\ImageConverterAjax::class);
+		$converter_ajax->register();
 
 		$notices = $this->container->get(Admin\Notices::class);
 		$notices->register();

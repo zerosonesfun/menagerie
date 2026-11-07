@@ -22,9 +22,9 @@ final class AssetLoader {
 
 	private const SETTINGS_STYLE_HANDLE = 'menagerie-admin-settings';
 
-	private const CONVERTOR_SCRIPT_HANDLE = 'menagerie-image-convertor';
+	private const CONVERTER_SCRIPT_HANDLE = 'menagerie-image-converter';
 
-	private const CONVERTOR_STYLE_HANDLE = 'menagerie-image-convertor';
+	private const CONVERTER_STYLE_HANDLE = 'menagerie-image-converter';
 
 	public function __construct(
 		private Registry $registry
@@ -85,8 +85,8 @@ final class AssetLoader {
 			$this->enqueue_admin_settings_style();
 		}
 
-		if ($this->is_convertor_page() && current_user_can('manage_options')) {
-			$this->enqueue_convertor_assets();
+		if ($this->is_converter_page() && current_user_can('manage_options')) {
+			$this->enqueue_converter_assets();
 		}
 
 		$settings = $this->registry->get();
@@ -98,7 +98,7 @@ final class AssetLoader {
 			return;
 		}
 
-		if ($this->is_settings_page() || $this->is_convertor_page()) {
+		if ($this->is_settings_page() || $this->is_converter_page()) {
 			return;
 		}
 
@@ -253,8 +253,8 @@ final class AssetLoader {
 		return isset($_GET['page']) && (string) $_GET['page'] === 'menagerie';
 	}
 
-	private function is_convertor_page(): bool {
-		return isset($_GET['page']) && (string) $_GET['page'] === 'menagerie-image-convertor';
+	private function is_converter_page(): bool {
+		return isset($_GET['page']) && (string) $_GET['page'] === 'menagerie-image-converter';
 	}
 
 	private function enqueue_admin_settings_style(): void {
@@ -270,34 +270,34 @@ final class AssetLoader {
 		);
 	}
 
-	private function enqueue_convertor_assets(): void {
-		$css_path = MENAGERIE_PATH . 'assets/css/menagerie-image-convertor.css';
-		$js_path  = MENAGERIE_PATH . 'assets/js/menagerie-image-convertor.js';
+	private function enqueue_converter_assets(): void {
+		$css_path = MENAGERIE_PATH . 'assets/css/menagerie-image-converter.css';
+		$js_path  = MENAGERIE_PATH . 'assets/js/menagerie-image-converter.js';
 		if (! is_readable($css_path) || ! is_readable($js_path)) {
 			return;
 		}
 
 		wp_enqueue_style(
-			self::CONVERTOR_STYLE_HANDLE,
-			MENAGERIE_URL . 'assets/css/menagerie-image-convertor.css',
+			self::CONVERTER_STYLE_HANDLE,
+			MENAGERIE_URL . 'assets/css/menagerie-image-converter.css',
 			[],
 			(string) filemtime($css_path)
 		);
 
 		wp_enqueue_script(
-			self::CONVERTOR_SCRIPT_HANDLE,
-			MENAGERIE_URL . 'assets/js/menagerie-image-convertor.js',
+			self::CONVERTER_SCRIPT_HANDLE,
+			MENAGERIE_URL . 'assets/js/menagerie-image-converter.js',
 			[],
 			(string) filemtime($js_path),
 			true
 		);
 
 		wp_localize_script(
-			self::CONVERTOR_SCRIPT_HANDLE,
-			'MenagerieConvertor',
+			self::CONVERTER_SCRIPT_HANDLE,
+			'MenagerieConverter',
 			[
 				'ajaxUrl' => admin_url('admin-ajax.php'),
-				'nonce'   => wp_create_nonce(\Menagerie\Admin\ImageConvertorAjax::NONCE_ACTION),
+				'nonce'   => wp_create_nonce(\Menagerie\Admin\ImageConverterAjax::NONCE_ACTION),
 				'strings' => [
 					'confirm' => __(
 						'This will replace image files in your Media Library with the selected format. This cannot be undone. Continue?',

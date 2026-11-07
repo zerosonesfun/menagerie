@@ -4,7 +4,7 @@ Tags: images, optimization, performance, upload, webp, avif
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -96,7 +96,7 @@ On the **front end**, file inputs are optimized once when you pick a file, then 
 
 = How do I convert images already in the Media Library? =
 
-Use **Tools → Image Convertor**. Choose AVIF, WebP, PNG, or JPG and run the batch conversion. Quality and dimensions follow **Settings → Menagerie**. GIF and SVG files are skipped. Formats your host cannot encode are disabled.
+Use **Tools → Image Converter**. Choose AVIF, WebP, PNG, or JPG and run the batch conversion. Quality and dimensions follow **Settings → Menagerie**. GIF and SVG files are skipped. Formats your host cannot encode are disabled.
 
 = Does Menagerie work with WordPress 7.1 client-side media processing? =
 
@@ -109,8 +109,11 @@ Yes. WordPress 7.1 can optimize images in the browser with its own WebAssembly p
 
 == Changelog ==
 
+= 1.1.1 =
+* Rename Tools menu/page to Image Converter.
+
 = 1.1.0 =
-* Tools → Image Convertor: batch-convert the Media Library to AVIF, WebP, PNG, or JPG with a progress bar and failure summary.
+* Tools → Image Converter: batch-convert the Media Library to AVIF, WebP, PNG, or JPG with a progress bar and failure summary.
 * Uses Menagerie quality, max dimensions, and “Convert when useful”; skips GIF/SVG; respects host encoder support.
 
 = 1.0.4 =
@@ -137,8 +140,11 @@ Yes. WordPress 7.1 can optimize images in the browser with its own WebAssembly p
 
 == Upgrade Notice ==
 
+= 1.1.1 =
+Tools menu renamed to Image Converter.
+
 = 1.1.0 =
-Adds Tools → Image Convertor for batch Media Library format conversion.
+Adds Tools → Image Converter for batch Media Library format conversion.
 
 = 1.0.4 =
 WordPress 7.1 compatibility, security and accessibility fixes. Recommended update.

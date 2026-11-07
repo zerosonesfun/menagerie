@@ -1,6 +1,6 @@
 <?php
 /**
- * Tools → Image Convertor admin screen.
+ * Tools → Image Converter admin screen.
  *
  * @package Menagerie
  */
@@ -15,8 +15,8 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-final class ImageConvertorPage {
-	public const SLUG = 'menagerie-image-convertor';
+final class ImageConverterPage {
+	public const SLUG = 'menagerie-image-converter';
 
 	public const CAPABILITY = 'manage_options';
 
@@ -27,8 +27,8 @@ final class ImageConvertorPage {
 
 	public function register(): void {
 		add_management_page(
-			__('Image Convertor', 'menagerie'),
-			__('Image Convertor', 'menagerie'),
+			__('Image Converter', 'menagerie'),
+			__('Image Converter', 'menagerie'),
 			self::CAPABILITY,
 			self::SLUG,
 			[$this, 'render_page']
@@ -63,8 +63,8 @@ final class ImageConvertorPage {
 			],
 		];
 
-		echo '<div class="wrap menagerie-convertor-wrap">';
-		echo '<h1>' . esc_html__('Image Convertor', 'menagerie') . '</h1>';
+		echo '<div class="wrap menagerie-converter-wrap">';
+		echo '<h1>' . esc_html__('Image Converter', 'menagerie') . '</h1>';
 		echo '<p class="description">' . esc_html__(
 			'Convert existing Media Library images to one format. Quality, max dimensions, and “Convert when useful” follow Settings → Menagerie. GIF and SVG files are skipped. JPEG flattens transparency.',
 			'menagerie'
@@ -94,7 +94,7 @@ final class ImageConvertorPage {
 			echo '</p></div>';
 		}
 
-		echo '<form id="menagerie-image-convertor-form" class="menagerie-convertor-form">';
+		echo '<form id="menagerie-image-converter-form" class="menagerie-converter-form">';
 		echo '<table class="form-table" role="presentation"><tbody>';
 		echo '<tr><th scope="row"><label for="menagerie-convert-target">' . esc_html__('Convert to', 'menagerie') . '</label></th><td>';
 		$default = 'webp';
@@ -137,14 +137,14 @@ final class ImageConvertorPage {
 
 		echo '</form>';
 
-		echo '<div id="menagerie-convertor-progress" class="menagerie-convertor-progress" hidden>';
-		echo '<div class="menagerie-convertor-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="menagerie-convertor-status">';
-		echo '<div class="menagerie-convertor-progress__bar" style="width:0%"></div>';
+		echo '<div id="menagerie-converter-progress" class="menagerie-converter-progress" hidden>';
+		echo '<div class="menagerie-converter-progress__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="menagerie-converter-status">';
+		echo '<div class="menagerie-converter-progress__bar" style="width:0%"></div>';
 		echo '</div>';
-		echo '<p id="menagerie-convertor-status" class="menagerie-convertor-status" aria-live="polite"></p>';
+		echo '<p id="menagerie-converter-status" class="menagerie-converter-status" aria-live="polite"></p>';
 		echo '</div>';
 
-		echo '<div id="menagerie-convertor-summary" class="menagerie-convertor-summary" hidden></div>';
+		echo '<div id="menagerie-converter-summary" class="menagerie-converter-summary" hidden></div>';
 		echo '</div>';
 	}
 }
