@@ -1,0 +1,412 @@
+# Copyright (C) 2026 Billy Wilcosky
+# This file is distributed under the same license as the Menagerie package.
+# Menagerie Chinese (Simplified) translation.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Menagerie 2.0.0\n"
+"Report-Msgid-Bugs-To: https://wilcosky.com\n"
+"POT-Creation-Date: 2026-11-07\n"
+"PO-Revision-Date: 2026-11-07 12:00-0500\n"
+"Last-Translator: Menagerie\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: menagerie\n"
+
+#. Plugin Name of the plugin
+#: menagerie.php
+#: includes/Admin/SettingsPage.php:28
+#: includes/Admin/SettingsPage.php:29
+#: includes/Admin/SettingsPage.php:44
+msgid "Menagerie"
+msgstr "Menagerie"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: menagerie.php
+msgid "https://wilcosky.com"
+msgstr "https://wilcosky.com"
+
+#. Description of the plugin
+#: menagerie.php
+msgid "Optional WebP/AVIF upload conversion, JPEG companions, picture/OG fallback, and bulk library conversion for WordPress 7.1+."
+msgstr "可选的 WebP/AVIF 上传转换、JPEG 配套、picture/OG 回退以及媒体库批量转换，适用于 WordPress 7.1+。"
+
+#. Author of the plugin
+#: menagerie.php
+msgid "Billy Wilcosky"
+msgstr "Billy Wilcosky"
+
+#: includes/Admin/ImageConverterAjax.php:42
+#: includes/Admin/ImageConverterAjax.php:86
+msgid "Invalid target format."
+msgstr "无效的目标格式。"
+
+#. translators: %s: MIME type
+#: includes/Admin/ImageConverterAjax.php:52
+#: includes/Admin/ImageConverterAjax.php:96
+#, php-format
+msgid "This host cannot encode %s."
+msgstr "此主机无法编码 %s。"
+
+#: includes/Admin/ImageConverterAjax.php:117
+msgid "Unexpected error while converting this image."
+msgstr "转换此图片时发生意外错误。"
+
+#. translators: %d: attachment ID
+#: includes/Admin/ImageConverterAjax.php:130
+#, php-format
+msgid "Attachment #%d"
+msgstr "附件 #%d"
+
+#: includes/Admin/ImageConverterAjax.php:137
+msgid "Unknown error."
+msgstr "未知错误。"
+
+#: includes/Admin/ImageConverterAjax.php:161
+msgid "You are not allowed to convert images."
+msgstr "你无权转换图片。"
+
+#: includes/Admin/ImageConverterAjax.php:167
+msgid "Security check failed. Reload the page and try again."
+msgstr "安全检查失败。请重新加载页面后再试。"
+
+#: includes/Admin/ImageConverterPage.php:30
+#: includes/Admin/ImageConverterPage.php:31
+#: includes/Admin/ImageConverterPage.php:67
+#: includes/Admin/SettingsPage.php:169
+msgid "Image Converter"
+msgstr "图片转换器"
+
+#: includes/Admin/ImageConverterPage.php:68
+msgid "Convert existing Media Library images to one format. Converter quality and “Convert when useful” follow Settings → Menagerie. GIF and SVG files are skipped. JPEG flattens transparency. When JPEG companion is enabled, AVIF/WebP conversions also generate JPEG companions (full and sized when enabled) as public files, not Media Library items. Images already in the target format are skipped."
+msgstr "将媒体库中的现有图片转换为一种格式。转换器质量以及“有益时才转换”遵循 设置 → Menagerie。会跳过 GIF 和 SVG。JPEG 会扁平化透明区域。启用 JPEG 配套时，AVIF/WebP 转换还会生成 JPEG 配套（完整及启用时的各尺寸）作为公开文件，而不是媒体库项目。已是目标格式的图片会跳过。"
+
+#. translators: %s: comma-separated format names
+#: includes/Admin/ImageConverterPage.php:90
+#, php-format
+msgid "This host cannot encode: %s. Those options are disabled. Check Tools → Site Health → Info → Media handling."
+msgstr "此主机无法编码：%s。这些选项已禁用。请查看 工具 → 站点健康 → 信息 → 媒体处理。"
+
+#: includes/Admin/ImageConverterPage.php:99
+msgid "Convert to"
+msgstr "转换为"
+
+#: includes/Admin/ImageConverterPage.php:133
+msgid "Convert library"
+msgstr "转换媒体库"
+
+#: includes/Admin/ImageConverterPage.php:135
+msgid "No convertible formats are available on this host."
+msgstr "此主机上没有可用的可转换格式。"
+
+#. translators: %s: format name (AVIF or WebP)
+#: includes/Admin/Notices.php:54
+#, php-format
+msgid "Upload output is set to %s, but this server cannot encode that format. Chrome/Edge with client-side media processing can still convert in the browser; other browsers fall back to the server and may leave JPEG/PNG unchanged. Check Tools → Site Health → Info → Media handling."
+msgstr "上传输出已设为 %s，但此服务器无法编码该格式。支持客户端媒体处理的 Chrome/Edge 仍可在浏览器中转换；其他浏览器会回退到服务器，并可能保持 JPEG/PNG 不变。请查看 工具 → 站点健康 → 信息 → 媒体处理。"
+
+#: includes/Admin/Notices.php:61
+msgid "This server cannot encode JPEG. JPEG companions and converter JPEG output will fail until GD or ImageMagick supports JPEG."
+msgstr "此服务器无法编码 JPEG。在 GD 或 ImageMagick 支持 JPEG 之前，JPEG 配套和转换器的 JPEG 输出都会失败。"
+
+#. translators: %s: comma-separated format names
+#: includes/Admin/Notices.php:77
+#, php-format
+msgid "This server may not decode %s. JPEG companions for those uploads may fail. Check Tools → Site Health → Info → Media handling."
+msgstr "此服务器可能无法解码 %s。这些上传的 JPEG 配套可能会失败。请查看 工具 → 站点健康 → 信息 → 媒体处理。"
+
+#: includes/Admin/SettingsPage.php:45
+msgid "WordPress 7.1+ handles upload encoding and thumbnails. Menagerie adds JPEG companions for older browsers and social previews, plus Tools → Image Converter for bulk library conversion."
+msgstr "WordPress 7.1+ 负责上传编码和缩略图。Menagerie 为旧版浏览器和社交预览添加 JPEG 配套，并提供 工具 → 图片转换器 用于批量转换媒体库。"
+
+#: includes/Admin/SettingsPage.php:56
+msgid "Upload output format"
+msgstr "上传输出格式"
+
+#: includes/Admin/SettingsPage.php:58
+msgid "Keep as uploaded (WordPress default)"
+msgstr "保持上传原样（WordPress 默认）"
+
+#: includes/Admin/SettingsPage.php:59
+msgid "Convert JPEG/PNG to WebP"
+msgstr "将 JPEG/PNG 转换为 WebP"
+
+#: includes/Admin/SettingsPage.php:60
+msgid "Convert JPEG/PNG to AVIF"
+msgstr "将 JPEG/PNG 转换为 AVIF"
+
+#: includes/Admin/SettingsPage.php:63
+msgid "Uses WordPress’s native image_editor_output_format filter. Client-side media processing (Chrome/Edge) and server uploads both honor this. Pair with JPEG companion below for older browsers and social previews."
+msgstr "使用 WordPress 原生的 image_editor_output_format 过滤器。客户端媒体处理（Chrome/Edge）与服务器上传都会遵守。可与下方的 JPEG 配套配合，用于旧版浏览器和社交预览。"
+
+#: includes/Admin/SettingsPage.php:68
+msgid "JPEG companion"
+msgstr "JPEG 配套"
+
+#: includes/Admin/SettingsPage.php:69
+msgid "When an attachment is AVIF or WebP, generate a JPEG companion in uploads (not a Media Library item) for older browsers and social previews. Transparent areas are flattened onto the background color below."
+msgstr "当附件为 AVIF 或 WebP 时，在 uploads 中生成 JPEG 配套（不是媒体库项目），供旧版浏览器和社交预览使用。透明区域会扁平化到下方的背景色上。"
+
+#: includes/Admin/SettingsPage.php:74
+msgid "JPEG companion quality (1-100)"
+msgstr "JPEG 配套质量（1-100）"
+
+#: includes/Admin/SettingsPage.php:78
+msgid "Default 75. Used only for companion JPEGs."
+msgstr "默认 75。仅用于配套 JPEG。"
+
+#: includes/Admin/SettingsPage.php:82
+msgid "JPEG companion background"
+msgstr "JPEG 配套背景"
+
+#: includes/Admin/SettingsPage.php:84
+msgid "Hex color used when flattening transparency (default #ffffff)."
+msgstr "扁平化透明时使用的十六进制颜色（默认 #ffffff）。"
+
+#: includes/Admin/SettingsPage.php:88
+msgid "JPEG companion max long edge (px)"
+msgstr "JPEG 配套最长边（px）"
+
+#: includes/Admin/SettingsPage.php:92
+msgid "Cap the longest edge of companion JPEGs (default 2560)."
+msgstr "限制配套 JPEG 的最长边（默认 2560）。"
+
+#: includes/Admin/SettingsPage.php:96
+msgid "Sized JPEG companions"
+msgstr "各尺寸 JPEG 配套"
+
+#: includes/Admin/SettingsPage.php:97
+msgid "Also generate JPEG companions for each intermediate size WordPress created for the attachment (used in picture fallback srcset)."
+msgstr "还为 WordPress 为该附件创建的每个中间尺寸生成 JPEG 配套（用于 picture 回退 srcset）。"
+
+#: includes/Admin/SettingsPage.php:102
+msgid "Automatic picture fallback"
+msgstr "自动 picture 回退"
+
+#: includes/Admin/SettingsPage.php:103
+msgid "Wrap standard WordPress images that have a JPEG companion in a <picture> element so supporting browsers get AVIF/WebP and others get JPEG (with a JPEG srcset when sized companions exist)."
+msgstr "将带有 JPEG 配套的标准 WordPress 图片包裹在 <picture> 元素中，使支持的浏览器获得 AVIF/WebP，其他浏览器获得 JPEG（存在尺寸配套时带 JPEG srcset）。"
+
+#: includes/Admin/SettingsPage.php:108
+msgid "Open Graph uses JPEG companion"
+msgstr "Open Graph 使用 JPEG 配套"
+
+#: includes/Admin/SettingsPage.php:109
+msgid "Prefer the full-size JPEG companion for og:image when the SEO image maps to that attachment."
+msgstr "当 SEO 图片对应该附件时，优先将完整尺寸的 JPEG 配套用于 og:image。"
+
+#: includes/Admin/SettingsPage.php:113
+msgid "Upload toasts"
+msgstr "上传提示"
+
+#: includes/Admin/SettingsPage.php:116
+msgid "Show toasts in the backend (admin)"
+msgstr "在后台（管理）显示提示"
+
+#: includes/Admin/SettingsPage.php:117
+msgid "Turn on or off status messages after Media Library and block editor uploads."
+msgstr "开启或关闭媒体库和区块编辑器上传后的状态消息。"
+
+#: includes/Admin/SettingsPage.php:122
+msgid "Show toasts on the frontend"
+msgstr "在前台显示提示"
+
+#: includes/Admin/SettingsPage.php:123
+msgid "Turn on or off status messages after front-end uploads (for users who can upload files)."
+msgstr "开启或关闭前台上传后的状态消息（面向可上传文件的用户）。"
+
+#: includes/Admin/SettingsPage.php:128
+msgid "Toast message text"
+msgstr "提示文案"
+
+#: includes/Admin/SettingsPage.php:129
+msgid "Optional. Leave a field blank to use the default (translated when a language pack is available). Max 500 characters each."
+msgstr "可选。留空则使用默认文案（有语言包时会翻译）。每项最多 500 个字符。"
+
+#: includes/Admin/SettingsPage.php:133
+msgid "Converted to AVIF"
+msgstr "已转换为 AVIF"
+
+#: includes/Admin/SettingsPage.php:139
+msgid "AVIF failed, used WebP"
+msgstr "AVIF 失败，已改用 WebP"
+
+#: includes/Admin/SettingsPage.php:145
+msgid "Converted to WebP"
+msgstr "已转换为 WebP"
+
+#: includes/Admin/SettingsPage.php:151
+msgid "Conversion failed"
+msgstr "转换失败"
+
+#: includes/Admin/SettingsPage.php:157
+msgid "JPEG companion created"
+msgstr "已创建 JPEG 配套"
+
+#: includes/Admin/SettingsPage.php:163
+msgid "Dismiss button (accessibility)"
+msgstr "关闭按钮（无访问性）"
+
+#: includes/Admin/SettingsPage.php:172
+msgid "Converter quality (1-100)"
+msgstr "转换器质量（1-100）"
+
+#: includes/Admin/SettingsPage.php:176
+msgid "Used by Tools → Image Converter when encoding to AVIF, WebP, JPEG, or PNG."
+msgstr "由 工具 → 图片转换器 在编码为 AVIF、WebP、JPEG 或 PNG 时使用。"
+
+#: includes/Admin/SettingsPage.php:180
+msgid "Convert when useful"
+msgstr "有益时才转换"
+
+#: includes/Admin/SettingsPage.php:181
+msgid "Skip re-encoding in the Image Converter when the new file would not be smaller."
+msgstr "如果新文件不会更小，则在图片转换器中跳过重新编码。"
+
+#: includes/Admin/SettingsPage.php:186
+msgid "Save Changes"
+msgstr "保存更改"
+
+#: includes/Assets/AssetLoader.php:141
+msgid "Starting…"
+msgstr "正在开始…"
+
+#: includes/Assets/AssetLoader.php:142
+msgid "Converting…"
+msgstr "正在转换…"
+
+#. translators: 1: current count, 2: total count
+#: includes/Assets/AssetLoader.php:144
+#, php-format
+msgid "Converting %1$s of %2$s…"
+msgstr "正在转换第 %1$s 张，共 %2$s 张…"
+
+#: includes/Assets/AssetLoader.php:145
+msgid "Conversion finished."
+msgstr "转换完成。"
+
+#: includes/Assets/AssetLoader.php:146
+msgid "Convert all Media Library images to the selected format? This cannot be undone."
+msgstr "要将媒体库中的所有图片转换为所选格式吗？此操作无法撤销。"
+
+#: includes/Assets/AssetLoader.php:147
+msgid "No images found in the Media Library."
+msgstr "媒体库中未找到图片。"
+
+#. translators: %d: number of converted images
+#: includes/Assets/AssetLoader.php:149
+#, php-format
+msgid "Converted: %d"
+msgstr "已转换：%d"
+
+#. translators: %d: number of skipped images
+#: includes/Assets/AssetLoader.php:151
+#, php-format
+msgid "Skipped: %d"
+msgstr "已跳过：%d"
+
+#. translators: %d: number of failed images
+#: includes/Assets/AssetLoader.php:153
+#, php-format
+msgid "Failed: %d"
+msgstr "失败：%d"
+
+#: includes/Assets/AssetLoader.php:154
+msgid "Failed conversions"
+msgstr "转换失败"
+
+#. translators: %d: number of additional failures not listed
+#: includes/Assets/AssetLoader.php:156
+#, php-format
+msgid "…and %d more."
+msgstr "…还有 %d 个。"
+
+#: includes/Assets/AssetLoader.php:157
+msgid "Converted"
+msgstr "已转换"
+
+#: includes/Assets/AssetLoader.php:158
+msgid "Skipped"
+msgstr "已跳过"
+
+#: includes/Assets/AssetLoader.php:159
+msgid "Failed"
+msgstr "失败"
+
+#: includes/Assets/AssetLoader.php:160
+msgid "Something went wrong. Please try again."
+msgstr "出了点问题。请重试。"
+
+#: includes/Settings/Registry.php:58
+msgid "Image converted to AVIF successfully and uploaded."
+msgstr "图片已成功转换为 AVIF 并上传。"
+
+#: includes/Settings/Registry.php:59
+msgid "Image couldn't be converted to AVIF; converted to WebP instead and uploaded."
+msgstr "无法将图片转换为 AVIF；已改为转换为 WebP 并上传。"
+
+#: includes/Settings/Registry.php:60
+msgid "Image converted to WebP successfully and uploaded."
+msgstr "图片已成功转换为 WebP 并上传。"
+
+#: includes/Settings/Registry.php:61
+msgid "Image couldn't be converted to the selected format; original uploaded."
+msgstr "无法将图片转换为所选格式；已上传原图。"
+
+#: includes/Settings/Registry.php:62
+msgid "JPEG fallback companion created."
+msgstr "已创建 JPEG 回退配套。"
+
+#: includes/Settings/Registry.php:63
+msgid "Dismiss notification"
+msgstr "关闭通知"
+
+#: includes/Upload/LibraryConverter.php:54
+msgid "Invalid attachment."
+msgstr "无效的附件。"
+
+#: includes/Upload/LibraryConverter.php:66
+msgid "You cannot edit this attachment."
+msgstr "你无法编辑此附件。"
+
+#: includes/Upload/LibraryConverter.php:72
+msgid "You cannot upload files."
+msgstr "你无法上传文件。"
+
+#: includes/Upload/LibraryConverter.php:79
+#: includes/Upload/LibraryConverter.php:90
+msgid "Not an image."
+msgstr "不是图片。"
+
+#: includes/Upload/LibraryConverter.php:97
+msgid "GIF and SVG files are left unchanged."
+msgstr "GIF 和 SVG 文件保持不变。"
+
+#: includes/Upload/LibraryConverter.php:108
+msgid "Already in the target format."
+msgstr "已是目标格式。"
+
+#: includes/Upload/LibraryConverter.php:116
+msgid "File is missing or unreadable."
+msgstr "文件缺失或不可读。"
+
+#: includes/Upload/LibraryConverter.php:124
+msgid "Could not read file size."
+msgstr "无法读取文件大小。"
+
+#: includes/Upload/LibraryConverter.php:151
+msgid "Encoding failed (format may be unsupported on this host)."
+msgstr "编码失败（此主机可能不支持该格式）。"
+
+#: includes/Upload/LibraryConverter.php:171
+msgid "Already small enough; left unchanged."
+msgstr "已经足够小；未作更改。"
+
+#: includes/Upload/LibraryConverter.php:203
+msgid "Could not regenerate image sizes."
+msgstr "无法重新生成图片尺寸。"
+

@@ -1,0 +1,412 @@
+# Copyright (C) 2026 Billy Wilcosky
+# This file is distributed under the same license as the Menagerie package.
+# Menagerie French translation.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Menagerie 2.0.0\n"
+"Report-Msgid-Bugs-To: https://wilcosky.com\n"
+"POT-Creation-Date: 2026-11-07\n"
+"PO-Revision-Date: 2026-11-07 12:00-0500\n"
+"Last-Translator: Menagerie\n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: menagerie\n"
+
+#. Plugin Name of the plugin
+#: menagerie.php
+#: includes/Admin/SettingsPage.php:28
+#: includes/Admin/SettingsPage.php:29
+#: includes/Admin/SettingsPage.php:44
+msgid "Menagerie"
+msgstr "Menagerie"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: menagerie.php
+msgid "https://wilcosky.com"
+msgstr "https://wilcosky.com"
+
+#. Description of the plugin
+#: menagerie.php
+msgid "Optional WebP/AVIF upload conversion, JPEG companions, picture/OG fallback, and bulk library conversion for WordPress 7.1+."
+msgstr "Conversion facultative des envois en WebP/AVIF, compagnons JPEG, secours picture/OG et conversion en masse de la médiathèque pour WordPress 7.1+."
+
+#. Author of the plugin
+#: menagerie.php
+msgid "Billy Wilcosky"
+msgstr "Billy Wilcosky"
+
+#: includes/Admin/ImageConverterAjax.php:42
+#: includes/Admin/ImageConverterAjax.php:86
+msgid "Invalid target format."
+msgstr "Format cible non valide."
+
+#. translators: %s: MIME type
+#: includes/Admin/ImageConverterAjax.php:52
+#: includes/Admin/ImageConverterAjax.php:96
+#, php-format
+msgid "This host cannot encode %s."
+msgstr "Cet hébergeur ne peut pas encoder %s."
+
+#: includes/Admin/ImageConverterAjax.php:117
+msgid "Unexpected error while converting this image."
+msgstr "Erreur inattendue lors de la conversion de cette image."
+
+#. translators: %d: attachment ID
+#: includes/Admin/ImageConverterAjax.php:130
+#, php-format
+msgid "Attachment #%d"
+msgstr "Média #%d"
+
+#: includes/Admin/ImageConverterAjax.php:137
+msgid "Unknown error."
+msgstr "Erreur inconnue."
+
+#: includes/Admin/ImageConverterAjax.php:161
+msgid "You are not allowed to convert images."
+msgstr "Vous n’êtes pas autorisé à convertir des images."
+
+#: includes/Admin/ImageConverterAjax.php:167
+msgid "Security check failed. Reload the page and try again."
+msgstr "Échec du contrôle de sécurité. Rechargez la page et réessayez."
+
+#: includes/Admin/ImageConverterPage.php:30
+#: includes/Admin/ImageConverterPage.php:31
+#: includes/Admin/ImageConverterPage.php:67
+#: includes/Admin/SettingsPage.php:169
+msgid "Image Converter"
+msgstr "Convertisseur d’images"
+
+#: includes/Admin/ImageConverterPage.php:68
+msgid "Convert existing Media Library images to one format. Converter quality and “Convert when useful” follow Settings → Menagerie. GIF and SVG files are skipped. JPEG flattens transparency. When JPEG companion is enabled, AVIF/WebP conversions also generate JPEG companions (full and sized when enabled) as public files, not Media Library items. Images already in the target format are skipped."
+msgstr "Convertit les images existantes de la médiathèque vers un format unique. La qualité du convertisseur et « Convertir si utile » suivent Réglages → Menagerie. Les fichiers GIF et SVG sont ignorés. Le JPEG aplatit la transparence. Lorsque le compagnon JPEG est activé, les conversions AVIF/WebP génèrent aussi des compagnons JPEG (plein format et tailles si activé) en fichiers publics, pas en éléments de la médiathèque. Les images déjà au format cible sont ignorées."
+
+#. translators: %s: comma-separated format names
+#: includes/Admin/ImageConverterPage.php:90
+#, php-format
+msgid "This host cannot encode: %s. Those options are disabled. Check Tools → Site Health → Info → Media handling."
+msgstr "Cet hébergeur ne peut pas encoder : %s. Ces options sont désactivées. Vérifiez Outils → Santé du site → Infos → Gestion des médias."
+
+#: includes/Admin/ImageConverterPage.php:99
+msgid "Convert to"
+msgstr "Convertir en"
+
+#: includes/Admin/ImageConverterPage.php:133
+msgid "Convert library"
+msgstr "Convertir la médiathèque"
+
+#: includes/Admin/ImageConverterPage.php:135
+msgid "No convertible formats are available on this host."
+msgstr "Aucun format convertible n’est disponible sur cet hébergeur."
+
+#. translators: %s: format name (AVIF or WebP)
+#: includes/Admin/Notices.php:54
+#, php-format
+msgid "Upload output is set to %s, but this server cannot encode that format. Chrome/Edge with client-side media processing can still convert in the browser; other browsers fall back to the server and may leave JPEG/PNG unchanged. Check Tools → Site Health → Info → Media handling."
+msgstr "La sortie d’envoi est réglée sur %s, mais ce serveur ne peut pas encoder ce format. Chrome/Edge avec le traitement média côté client peuvent encore convertir dans le navigateur ; les autres navigateurs basculent sur le serveur et peuvent laisser les JPEG/PNG inchangés. Vérifiez Outils → Santé du site → Infos → Gestion des médias."
+
+#: includes/Admin/Notices.php:61
+msgid "This server cannot encode JPEG. JPEG companions and converter JPEG output will fail until GD or ImageMagick supports JPEG."
+msgstr "Ce serveur ne peut pas encoder le JPEG. Les compagnons JPEG et la sortie JPEG du convertisseur échoueront tant que GD ou ImageMagick ne prendront pas en charge le JPEG."
+
+#. translators: %s: comma-separated format names
+#: includes/Admin/Notices.php:77
+#, php-format
+msgid "This server may not decode %s. JPEG companions for those uploads may fail. Check Tools → Site Health → Info → Media handling."
+msgstr "Ce serveur peut ne pas décoder %s. Les compagnons JPEG de ces envois peuvent échouer. Vérifiez Outils → Santé du site → Infos → Gestion des médias."
+
+#: includes/Admin/SettingsPage.php:45
+msgid "WordPress 7.1+ handles upload encoding and thumbnails. Menagerie adds JPEG companions for older browsers and social previews, plus Tools → Image Converter for bulk library conversion."
+msgstr "WordPress 7.1+ gère l’encodage des envois et les miniatures. Menagerie ajoute des compagnons JPEG pour les navigateurs plus anciens et les aperçus sociaux, plus Outils → Convertisseur d’images pour la conversion en masse."
+
+#: includes/Admin/SettingsPage.php:56
+msgid "Upload output format"
+msgstr "Format de sortie à l’envoi"
+
+#: includes/Admin/SettingsPage.php:58
+msgid "Keep as uploaded (WordPress default)"
+msgstr "Conserver tel quel (défaut WordPress)"
+
+#: includes/Admin/SettingsPage.php:59
+msgid "Convert JPEG/PNG to WebP"
+msgstr "Convertir JPEG/PNG en WebP"
+
+#: includes/Admin/SettingsPage.php:60
+msgid "Convert JPEG/PNG to AVIF"
+msgstr "Convertir JPEG/PNG en AVIF"
+
+#: includes/Admin/SettingsPage.php:63
+msgid "Uses WordPress’s native image_editor_output_format filter. Client-side media processing (Chrome/Edge) and server uploads both honor this. Pair with JPEG companion below for older browsers and social previews."
+msgstr "Utilise le filtre natif image_editor_output_format de WordPress. Le traitement média côté client (Chrome/Edge) et les envois serveur le respectent. Associez-le au compagnon JPEG ci-dessous pour les navigateurs plus anciens et les aperçus sociaux."
+
+#: includes/Admin/SettingsPage.php:68
+msgid "JPEG companion"
+msgstr "Compagnon JPEG"
+
+#: includes/Admin/SettingsPage.php:69
+msgid "When an attachment is AVIF or WebP, generate a JPEG companion in uploads (not a Media Library item) for older browsers and social previews. Transparent areas are flattened onto the background color below."
+msgstr "Lorsqu’un média est AVIF ou WebP, génère un compagnon JPEG dans uploads (pas un élément de la médiathèque) pour les navigateurs plus anciens et les aperçus sociaux. Les zones transparentes sont aplaties sur la couleur d’arrière-plan ci-dessous."
+
+#: includes/Admin/SettingsPage.php:74
+msgid "JPEG companion quality (1-100)"
+msgstr "Qualité du compagnon JPEG (1-100)"
+
+#: includes/Admin/SettingsPage.php:78
+msgid "Default 75. Used only for companion JPEGs."
+msgstr "Par défaut 75. Utilisé uniquement pour les JPEG compagnons."
+
+#: includes/Admin/SettingsPage.php:82
+msgid "JPEG companion background"
+msgstr "Arrière-plan du compagnon JPEG"
+
+#: includes/Admin/SettingsPage.php:84
+msgid "Hex color used when flattening transparency (default #ffffff)."
+msgstr "Couleur hexadécimale utilisée pour aplatir la transparence (défaut #ffffff)."
+
+#: includes/Admin/SettingsPage.php:88
+msgid "JPEG companion max long edge (px)"
+msgstr "Bord long max du compagnon JPEG (px)"
+
+#: includes/Admin/SettingsPage.php:92
+msgid "Cap the longest edge of companion JPEGs (default 2560)."
+msgstr "Limite le bord le plus long des JPEG compagnons (défaut 2560)."
+
+#: includes/Admin/SettingsPage.php:96
+msgid "Sized JPEG companions"
+msgstr "Compagnons JPEG par taille"
+
+#: includes/Admin/SettingsPage.php:97
+msgid "Also generate JPEG companions for each intermediate size WordPress created for the attachment (used in picture fallback srcset)."
+msgstr "Génère aussi des compagnons JPEG pour chaque taille intermédiaire créée par WordPress pour le média (utilisé dans le srcset de repli picture)."
+
+#: includes/Admin/SettingsPage.php:102
+msgid "Automatic picture fallback"
+msgstr "Repli picture automatique"
+
+#: includes/Admin/SettingsPage.php:103
+msgid "Wrap standard WordPress images that have a JPEG companion in a <picture> element so supporting browsers get AVIF/WebP and others get JPEG (with a JPEG srcset when sized companions exist)."
+msgstr "Enveloppe les images WordPress standard ayant un compagnon JPEG dans un élément <picture> afin que les navigateurs compatibles reçoivent AVIF/WebP et les autres du JPEG (avec un srcset JPEG si des compagnons par taille existent)."
+
+#: includes/Admin/SettingsPage.php:108
+msgid "Open Graph uses JPEG companion"
+msgstr "Open Graph utilise le compagnon JPEG"
+
+#: includes/Admin/SettingsPage.php:109
+msgid "Prefer the full-size JPEG companion for og:image when the SEO image maps to that attachment."
+msgstr "Préfère le compagnon JPEG pleine taille pour og:image lorsque l’image SEO correspond à ce média."
+
+#: includes/Admin/SettingsPage.php:113
+msgid "Upload toasts"
+msgstr "Toasts d’envoi"
+
+#: includes/Admin/SettingsPage.php:116
+msgid "Show toasts in the backend (admin)"
+msgstr "Afficher les toasts dans le back-office (admin)"
+
+#: includes/Admin/SettingsPage.php:117
+msgid "Turn on or off status messages after Media Library and block editor uploads."
+msgstr "Active ou désactive les messages d’état après les envois de la médiathèque et de l’éditeur de blocs."
+
+#: includes/Admin/SettingsPage.php:122
+msgid "Show toasts on the frontend"
+msgstr "Afficher les toasts sur le front"
+
+#: includes/Admin/SettingsPage.php:123
+msgid "Turn on or off status messages after front-end uploads (for users who can upload files)."
+msgstr "Active ou désactive les messages d’état après les envois côté front (pour les utilisateurs pouvant envoyer des fichiers)."
+
+#: includes/Admin/SettingsPage.php:128
+msgid "Toast message text"
+msgstr "Texte des toasts"
+
+#: includes/Admin/SettingsPage.php:129
+msgid "Optional. Leave a field blank to use the default (translated when a language pack is available). Max 500 characters each."
+msgstr "Facultatif. Laissez un champ vide pour utiliser la valeur par défaut (traduite si un pack de langue est disponible). Max. 500 caractères chacun."
+
+#: includes/Admin/SettingsPage.php:133
+msgid "Converted to AVIF"
+msgstr "Converti en AVIF"
+
+#: includes/Admin/SettingsPage.php:139
+msgid "AVIF failed, used WebP"
+msgstr "AVIF échoué, WebP utilisé"
+
+#: includes/Admin/SettingsPage.php:145
+msgid "Converted to WebP"
+msgstr "Converti en WebP"
+
+#: includes/Admin/SettingsPage.php:151
+msgid "Conversion failed"
+msgstr "Conversion échouée"
+
+#: includes/Admin/SettingsPage.php:157
+msgid "JPEG companion created"
+msgstr "Compagnon JPEG créé"
+
+#: includes/Admin/SettingsPage.php:163
+msgid "Dismiss button (accessibility)"
+msgstr "Bouton fermer (accessibilité)"
+
+#: includes/Admin/SettingsPage.php:172
+msgid "Converter quality (1-100)"
+msgstr "Qualité du convertisseur (1-100)"
+
+#: includes/Admin/SettingsPage.php:176
+msgid "Used by Tools → Image Converter when encoding to AVIF, WebP, JPEG, or PNG."
+msgstr "Utilisé par Outils → Convertisseur d’images lors de l’encodage en AVIF, WebP, JPEG ou PNG."
+
+#: includes/Admin/SettingsPage.php:180
+msgid "Convert when useful"
+msgstr "Convertir si utile"
+
+#: includes/Admin/SettingsPage.php:181
+msgid "Skip re-encoding in the Image Converter when the new file would not be smaller."
+msgstr "Ignore le réencodage dans le Convertisseur d’images lorsque le nouveau fichier ne serait pas plus petit."
+
+#: includes/Admin/SettingsPage.php:186
+msgid "Save Changes"
+msgstr "Enregistrer les modifications"
+
+#: includes/Assets/AssetLoader.php:141
+msgid "Starting…"
+msgstr "Démarrage…"
+
+#: includes/Assets/AssetLoader.php:142
+msgid "Converting…"
+msgstr "Conversion…"
+
+#. translators: 1: current count, 2: total count
+#: includes/Assets/AssetLoader.php:144
+#, php-format
+msgid "Converting %1$s of %2$s…"
+msgstr "Conversion de %1$s sur %2$s…"
+
+#: includes/Assets/AssetLoader.php:145
+msgid "Conversion finished."
+msgstr "Conversion terminée."
+
+#: includes/Assets/AssetLoader.php:146
+msgid "Convert all Media Library images to the selected format? This cannot be undone."
+msgstr "Convertir toutes les images de la médiathèque vers le format sélectionné ? Cette action est irréversible."
+
+#: includes/Assets/AssetLoader.php:147
+msgid "No images found in the Media Library."
+msgstr "Aucune image trouvée dans la médiathèque."
+
+#. translators: %d: number of converted images
+#: includes/Assets/AssetLoader.php:149
+#, php-format
+msgid "Converted: %d"
+msgstr "Convertis : %d"
+
+#. translators: %d: number of skipped images
+#: includes/Assets/AssetLoader.php:151
+#, php-format
+msgid "Skipped: %d"
+msgstr "Ignorés : %d"
+
+#. translators: %d: number of failed images
+#: includes/Assets/AssetLoader.php:153
+#, php-format
+msgid "Failed: %d"
+msgstr "Échoués : %d"
+
+#: includes/Assets/AssetLoader.php:154
+msgid "Failed conversions"
+msgstr "Conversions échouées"
+
+#. translators: %d: number of additional failures not listed
+#: includes/Assets/AssetLoader.php:156
+#, php-format
+msgid "…and %d more."
+msgstr "…et %d de plus."
+
+#: includes/Assets/AssetLoader.php:157
+msgid "Converted"
+msgstr "Convertis"
+
+#: includes/Assets/AssetLoader.php:158
+msgid "Skipped"
+msgstr "Ignorés"
+
+#: includes/Assets/AssetLoader.php:159
+msgid "Failed"
+msgstr "Échoués"
+
+#: includes/Assets/AssetLoader.php:160
+msgid "Something went wrong. Please try again."
+msgstr "Une erreur s’est produite. Veuillez réessayer."
+
+#: includes/Settings/Registry.php:58
+msgid "Image converted to AVIF successfully and uploaded."
+msgstr "Image convertie en AVIF avec succès et envoyée."
+
+#: includes/Settings/Registry.php:59
+msgid "Image couldn't be converted to AVIF; converted to WebP instead and uploaded."
+msgstr "Impossible de convertir l’image en AVIF ; convertie en WebP à la place et envoyée."
+
+#: includes/Settings/Registry.php:60
+msgid "Image converted to WebP successfully and uploaded."
+msgstr "Image convertie en WebP avec succès et envoyée."
+
+#: includes/Settings/Registry.php:61
+msgid "Image couldn't be converted to the selected format; original uploaded."
+msgstr "Impossible de convertir l’image au format sélectionné ; original envoyé."
+
+#: includes/Settings/Registry.php:62
+msgid "JPEG fallback companion created."
+msgstr "Compagnon JPEG de repli créé."
+
+#: includes/Settings/Registry.php:63
+msgid "Dismiss notification"
+msgstr "Fermer la notification"
+
+#: includes/Upload/LibraryConverter.php:54
+msgid "Invalid attachment."
+msgstr "Média non valide."
+
+#: includes/Upload/LibraryConverter.php:66
+msgid "You cannot edit this attachment."
+msgstr "Vous ne pouvez pas modifier ce média."
+
+#: includes/Upload/LibraryConverter.php:72
+msgid "You cannot upload files."
+msgstr "Vous ne pouvez pas envoyer de fichiers."
+
+#: includes/Upload/LibraryConverter.php:79
+#: includes/Upload/LibraryConverter.php:90
+msgid "Not an image."
+msgstr "Ce n’est pas une image."
+
+#: includes/Upload/LibraryConverter.php:97
+msgid "GIF and SVG files are left unchanged."
+msgstr "Les fichiers GIF et SVG sont laissés inchangés."
+
+#: includes/Upload/LibraryConverter.php:108
+msgid "Already in the target format."
+msgstr "Déjà au format cible."
+
+#: includes/Upload/LibraryConverter.php:116
+msgid "File is missing or unreadable."
+msgstr "Le fichier est manquant ou illisible."
+
+#: includes/Upload/LibraryConverter.php:124
+msgid "Could not read file size."
+msgstr "Impossible de lire la taille du fichier."
+
+#: includes/Upload/LibraryConverter.php:151
+msgid "Encoding failed (format may be unsupported on this host)."
+msgstr "Échec de l’encodage (le format peut être non pris en charge sur cet hébergeur)."
+
+#: includes/Upload/LibraryConverter.php:171
+msgid "Already small enough; left unchanged."
+msgstr "Déjà assez petit ; laissé inchangé."
+
+#: includes/Upload/LibraryConverter.php:203
+msgid "Could not regenerate image sizes."
+msgstr "Impossible de régénérer les tailles d’image."
+

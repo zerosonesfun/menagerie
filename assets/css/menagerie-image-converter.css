@@ -1,0 +1,82 @@
+/**
+ * Menagerie - Tools → Image Converter.
+ *
+ * @package Menagerie
+ */
+
+.menagerie-converter-wrap .menagerie-converter-form {
+	max-width: 36rem;
+	margin-bottom: 1.5rem;
+}
+
+.menagerie-converter-progress {
+	max-width: 36rem;
+	margin: 1.25rem 0 0;
+}
+
+.menagerie-converter-progress__track {
+	height: 4px;
+	border-radius: 999px;
+	background: #dcdcde;
+	overflow: hidden;
+}
+
+.menagerie-converter-progress__bar {
+	height: 100%;
+	width: 0;
+	border-radius: inherit;
+	background: #2271b1;
+	transition: width 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.menagerie-converter-progress__bar {
+		transition: none;
+	}
+}
+
+.menagerie-converter-status {
+	margin: 0.6rem 0 0;
+	color: #50575e;
+}
+
+.menagerie-converter-summary {
+	max-width: 40rem;
+	margin-top: 1.5rem;
+	padding-top: 1rem;
+	border-top: 1px solid #dcdcde;
+}
+
+.menagerie-converter-summary h2 {
+	margin: 0 0 0.75rem;
+	font-size: 1.15rem;
+}
+
+.menagerie-converter-summary h3 {
+	margin: 1.25rem 0 0.5rem;
+	font-size: 1rem;
+}
+
+.menagerie-converter-summary__counts,
+.menagerie-converter-summary__failures {
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.menagerie-converter-summary__failures li {
+	margin-bottom: 0.35rem;
+}
+
+@media (prefers-color-scheme: dark) {
+	.menagerie-converter-progress__track {
+		background: #3c434a;
+	}
+
+	.menagerie-converter-status {
+		color: #a7aaad;
+	}
+
+	.menagerie-converter-summary {
+		border-top-color: #3c434a;
+	}
+}

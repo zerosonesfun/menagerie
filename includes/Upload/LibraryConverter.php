@@ -1,0 +1,251 @@
+<?php
+/**
+ * Convert an existing media library attachment to a target MIME type.
+ *
+ * @package Menagerie
+ */
+
+declare(strict_types=1);
+
+namespace Menagerie\Upload;
+
+use Menagerie\Settings\Registry;
+
+if (! defined('ABSPATH')) {
+	exit;
+}
+
+final class LibraryConverter {
+	private static bool $recursing = false;
+
+	public function __construct(
+		private Registry $registry,
+		private ImageEncoder $encoder,
+		private JpegCompanion $companion
+	) {
+	}
+
+	/**
+	 * Whether a metadata generation pass is nested inside a library conversion.
+	 */
+	public static function is_recursing(): bool {
+		return self::$recursing;
+	}
+
+	/**
+	 * @param bool                  $force         When true, ignore “convert when useful” (upload rescue path).
+	 * @param array<string, mixed>|null $live_metadata Metadata from an in-flight generate pass (rescue).
+	 * @return array{
+	 *   status: 'converted'|'skipped'|'failed',
+	 *   message?: string,
+	 *   original_bytes?: int,
+	 *   new_bytes?: int
+	 * }
+	 */
+	public function convert_attachment(
+		int $attachment_id,
+		string $target_mime,
+		bool $force = false,
+		?array $live_metadata = null
+	): array {
+		if ($attachment_id <= 0) {
+			return [
+				'status'  => 'failed',
+				'message' => __('Invalid attachment.', 'menagerie'),
+			];
+		}
+
+		/*
+		 * Upload rescue ($force) runs inside wp_generate_attachment_metadata where the
+		 * uploader may not yet have edit_post on a brand-new attachment. The Tools
+		 * converter always keeps the capability check.
+		 */
+		if (! $force && ! current_user_can('edit_post', $attachment_id)) {
+			return [
+				'status'  => 'failed',
+				'message' => __('You cannot edit this attachment.', 'menagerie'),
+			];
+		}
+		if ($force && is_user_logged_in() && ! current_user_can('upload_files')) {
+			return [
+				'status'  => 'failed',
+				'message' => __('You cannot upload files.', 'menagerie'),
+			];
+		}
+
+		if (! wp_attachment_is_image($attachment_id)) {
+			return [
+				'status'  => 'skipped',
+				'message' => __('Not an image.', 'menagerie'),
+			];
+		}
+
+		$mime_in = $this->companion->resolve_attachment_mime($attachment_id);
+		if ($mime_in === '' || ! str_starts_with($mime_in, 'image/')) {
+			$mime_in = get_post_mime_type($attachment_id);
+		}
+		if (! is_string($mime_in) || ! str_starts_with($mime_in, 'image/')) {
+			return [
+				'status'  => 'skipped',
+				'message' => __('Not an image.', 'menagerie'),
+			];
+		}
+
+		if ($mime_in === 'image/gif' || $mime_in === 'image/svg+xml') {
+			return [
+				'status'  => 'skipped',
+				'message' => __('GIF and SVG files are left unchanged.', 'menagerie'),
+			];
+		}
+
+		if ($mime_in === $target_mime) {
+			if (in_array($mime_in, [ 'image/avif', 'image/webp' ], true)) {
+				$this->companion->maybe_ensure_missing($attachment_id, $live_metadata);
+			}
+
+			return [
+				'status'  => 'skipped',
+				'message' => __('Already in the target format.', 'menagerie'),
+			];
+		}
+
+		$path = get_attached_file($attachment_id, true);
+		if (! is_string($path) || $path === '' || ! is_readable($path)) {
+			return [
+				'status'  => 'failed',
+				'message' => __('File is missing or unreadable.', 'menagerie'),
+			];
+		}
+
+		$original_bytes = @filesize($path);
+		if ($original_bytes === false || $original_bytes < 1) {
+			return [
+				'status'  => 'failed',
+				'message' => __('Could not read file size.', 'menagerie'),
+			];
+		}
+
+		$settings = $this->registry->get();
+		$quality  = (int) ($settings['converter_quality'] ?? 85);
+
+		/*
+		 * Do not apply jpeg_companion_max here — that setting only caps companion
+		 * fallbacks. Library conversion keeps full source dimensions (0 = no limit).
+		 */
+		OutputFormat::suspend();
+		try {
+			$result = $this->encoder->try_encode(
+				$path,
+				[ $target_mime ],
+				$quality,
+				0,
+				0
+			);
+		} finally {
+			OutputFormat::resume();
+		}
+
+		if ($result === null) {
+			return [
+				'status'  => 'failed',
+				'message' => __('Encoding failed (format may be unsupported on this host).', 'menagerie'),
+			];
+		}
+
+		$new_path = $result['path'];
+		$new_mime = $result['mime'];
+		$new_size = $result['bytes'];
+
+		if (! $force && ! empty($settings['convert_when_useful']) && $new_size >= $original_bytes) {
+			if ($new_path !== $path && is_file($new_path)) {
+				@unlink($new_path);
+			}
+
+			// Fill a missing companion when the library file is already modern.
+			if (in_array($mime_in, [ 'image/avif', 'image/webp' ], true)) {
+				$this->companion->maybe_ensure_missing($attachment_id, $live_metadata);
+			}
+
+			return [
+				'status'         => 'skipped',
+				'message'        => __('Already small enough; left unchanged.', 'menagerie'),
+				'original_bytes' => $original_bytes,
+				'new_bytes'      => $new_size,
+			];
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
+		$old_metadata = is_array($live_metadata) ? $live_metadata : wp_get_attachment_metadata($attachment_id);
+		if (! is_array($old_metadata)) {
+			$old_metadata = [];
+		}
+
+		self::$recursing = true;
+		OutputFormat::suspend();
+		try {
+			$new_metadata = wp_generate_attachment_metadata($attachment_id, $new_path);
+		} finally {
+			OutputFormat::resume();
+			self::$recursing = false;
+		}
+
+		if (! is_array($new_metadata) || ! isset($new_metadata['file'])) {
+			if (is_array($new_metadata)) {
+				$this->encoder->delete_intermediate_files($new_path, $new_metadata);
+			}
+			if ($new_path !== $path && is_file($new_path)) {
+				@unlink($new_path);
+			}
+
+			return [
+				'status'  => 'failed',
+				'message' => __('Could not regenerate image sizes.', 'menagerie'),
+			];
+		}
+
+		$this->encoder->delete_intermediate_files($path, $old_metadata);
+
+		if ($new_path !== $path && is_file($path)) {
+			@unlink($path);
+		}
+
+		/*
+		 * Prefer the path WordPress recorded (may be -scaled when above big_image_threshold)
+		 * so get_attached_file stays aligned with metadata['file'].
+		 */
+		$uploads = wp_get_upload_dir();
+		if (empty($uploads['error']) && ! empty($uploads['basedir']) && is_string($new_metadata['file'])) {
+			update_attached_file(
+				$attachment_id,
+				path_join((string) $uploads['basedir'], (string) $new_metadata['file'])
+			);
+		} else {
+			update_attached_file($attachment_id, $new_path);
+		}
+
+		wp_update_attachment_metadata($attachment_id, $new_metadata);
+
+		wp_update_post(
+			[
+				'ID'             => $attachment_id,
+				'post_mime_type' => $new_mime,
+			]
+		);
+
+		$this->encoder->write_success_meta($attachment_id, $original_bytes, $new_size, $new_mime, false);
+
+		if (in_array($new_mime, [ 'image/avif', 'image/webp' ], true)) {
+			$this->companion->ensure_from_attachment($attachment_id);
+		} else {
+			// Primary is no longer modern - drop any leftover companion file/meta.
+			$this->companion->delete_for_attachment($attachment_id);
+		}
+
+		return [
+			'status'         => 'converted',
+			'original_bytes' => $original_bytes,
+			'new_bytes'      => $new_size,
+		];
+	}
+}

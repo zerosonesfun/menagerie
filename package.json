@@ -1,0 +1,10 @@
+{
+  "name": "menagerie",
+  "version": "2.0.0",
+  "description": "Menagerie WordPress plugin - packaging helpers",
+  "private": true,
+  "scripts": {
+    "zip": "bash scripts/make-zip.sh"
+  },
+  "license": "GPL-2.0-or-later"
+}
