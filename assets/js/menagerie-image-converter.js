@@ -1,5 +1,5 @@
 /**
- * Menagerie — Tools → Image Converter (batched AJAX).
+ * Menagerie - Tools → Image Converter (batched AJAX).
  *
  * @package Menagerie
  */
@@ -133,7 +133,7 @@
 				var li = document.createElement('li');
 				var title = f.title || '#' + f.id;
 				var reason = f.reason || '';
-				li.appendChild(document.createTextNode(title + (reason ? ' — ' + reason : '')));
+				li.appendChild(document.createTextNode(title + (reason ? ' - ' + reason : '')));
 				failList.appendChild(li);
 			});
 			summaryEl.appendChild(failList);

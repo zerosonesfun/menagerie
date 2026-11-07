@@ -1,12 +1,12 @@
 /**
- * Menagerie toast notifications — scoped, light/dark, reduced motion.
+ * Menagerie toast notifications - scoped, light/dark, reduced motion.
  *
  * @package Menagerie
  */
 
 /*
  * z-index: max for legacy stacks.
- * popover="manual" + showPopover() (JS) uses the CSS top layer — above <dialog>,
+ * popover="manual" + showPopover() (JS) uses the CSS top layer - above <dialog>,
  * other popovers, and most z-index stacks (Quill modals, etc.).
  * !important beats theme utilities (e.g. sticky “back to top” with z-index + !important).
  */
@@ -142,7 +142,7 @@ body.wp-admin.folded .menagerie-toast {
 	align-items: center !important;
 	justify-content: center !important;
 	flex: 0 0 auto !important;
-	/* Fixed square — not min-* only (themes inflate min-height). */
+	/* Fixed square - not min-* only (themes inflate min-height). */
 	width: 1.75rem !important;
 	height: 1.75rem !important;
 	min-width: 1.75rem !important;

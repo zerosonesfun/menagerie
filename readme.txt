@@ -8,7 +8,7 @@ Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Makes uploaded images smaller and faster—without slowing down your site for visitors.
+Makes uploaded images smaller and faster - without slowing down your site for visitors.
 
 == Description ==
 
@@ -17,13 +17,13 @@ Menagerie by Billy Wilcosky (https://wilcosky.com) shrinks images when they’re
 * Works in the browser before the file reaches your server (or on the server if you prefer)
 * Saves images in modern formats when possible (AVIF / WebP), with JPEG fallback for older browsers and social sharing
 * Safe: if anything goes wrong, the original image still uploads
-* No outside services—everything stays on your site
+* No outside services - everything stays on your site
 
 == Installation ==
 
 1. Upload the plugin and activate it
 2. Go to **Settings → Menagerie** and choose your options
-3. Upload images as usual—Menagerie handles the rest
+3. Upload images as usual - Menagerie handles the rest
 
 To convert images already in your Media Library, use **Tools → Image Converter**.
 

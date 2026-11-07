@@ -1,5 +1,5 @@
 /**
- * Menagerie — client-side image optimization before upload.
+ * Menagerie - client-side image optimization before upload.
  *
  * @package Menagerie
  */
@@ -390,10 +390,10 @@
 	}
 
 	/**
-	 * Native canvas AVIF — quality ladder then type-only (dist build uses WASM + this).
+	 * Native canvas AVIF - quality ladder then type-only (dist build uses WASM + this).
 	 *
 	 * @param {HTMLCanvasElement} canvasEl
-	 * @param {number} q 0–1
+	 * @param {number} q 0-1
 	 * @returns {Promise<{blob: Blob, mime: string}|null>}
 	 */
 	function canvasToBlobAvifNative(canvasEl, q) {
@@ -428,10 +428,10 @@
 	}
 
 	/**
-	 * Native canvas WebP — quality ladder (dist build also uses WASM retries + this).
+	 * Native canvas WebP - quality ladder (dist build also uses WASM retries + this).
 	 *
 	 * @param {HTMLCanvasElement} canvasEl
-	 * @param {number} q 0–1
+	 * @param {number} q 0-1
 	 * @returns {Promise<{blob: Blob, mime: string}|null>}
 	 */
 	function canvasToBlobWebpNative(canvasEl, q) {
@@ -1132,7 +1132,7 @@
 				return fetchWithOptimizedFormData(origFetch, input, init, init.body);
 			}
 
-			/* fetch(Request) with FormData only on the Request — no init.body to read synchronously. */
+			/* fetch(Request) with FormData only on the Request - no init.body to read synchronously. */
 			if (input instanceof Request && (!init || init.body === undefined)) {
 				return input
 					.clone()

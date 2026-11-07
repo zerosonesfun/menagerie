@@ -64,7 +64,7 @@ final class OpenGraph {
 
 	/**
 	 * Replace an SEO plugin's chosen image URL only when that URL is a modern
-	 * attachment that has a JPEG companion — never swap in an unrelated companion.
+	 * attachment that has a JPEG companion - never swap in an unrelated companion.
 	 *
 	 * @param mixed $url Image URL.
 	 * @return mixed

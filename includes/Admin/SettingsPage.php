@@ -82,11 +82,11 @@ final class SettingsPage {
 		$this->number_row('max_height', __('Max height (px)', 'menagerie'), 1, 8192, $settings);
 		$this->number_row(
 			'quality',
-			__('Quality (1–100)', 'menagerie'),
+			__('Quality (1-100)', 'menagerie'),
 			1,
 			100,
 			$settings,
-			__('Higher values preserve more detail (and larger files). Typical web range is roughly 80–90. Downscaling uses high-quality resampling in the browser.', 'menagerie')
+			__('Higher values preserve more detail (and larger files). Typical web range is roughly 80-90. Downscaling uses high-quality resampling in the browser.', 'menagerie')
 		);
 		$this->checkbox_row(
 			'wasm_encoders',
@@ -98,7 +98,7 @@ final class SettingsPage {
 		$this->checkbox_row(
 			'server_side_fallback',
 			__('Server-side fallback (last resort)', 'menagerie'),
-			__('When the browser cannot optimize an image, try again on the server using the same format order and quality settings as above (Auto tries AVIF first, then WebP, then JPEG or PNG). Requires PHP GD or ImageMagick to support each output format—see Tools → Site Health → Info → Media handling. AVIF encoding needs a recent WordPress and either GD with AVIF enabled or Imagick with libavif; if AVIF is not available, the next format in the chain is used. Menagerie runs AVIF and WebP each twice on failure before falling through, similar to the browser path.', 'menagerie'),
+			__('When the browser cannot optimize an image, try again on the server using the same format order and quality settings as above (Auto tries AVIF first, then WebP, then JPEG or PNG). Requires PHP GD or ImageMagick to support each output format - see Tools → Site Health → Info → Media handling. AVIF encoding needs a recent WordPress and either GD with AVIF enabled or Imagick with libavif; if AVIF is not available, the next format in the chain is used. Menagerie runs AVIF and WebP each twice on failure before falling through, similar to the browser path.', 'menagerie'),
 			$settings
 		);
 		$this->checkbox_row(
@@ -111,12 +111,12 @@ final class SettingsPage {
 		$this->checkbox_row(
 			'jpeg_companion',
 			__('JPEG companion (browser fallback)', 'menagerie'),
-			__('When the primary upload is AVIF or WebP, also generate a JPEG from the original image (not from the compressed file) for older browsers and social previews. The JPEG is stored in uploads and linked to the attachment—it does not appear as a separate Media Library item. Transparent areas are flattened onto the background color below.', 'menagerie'),
+			__('When the primary upload is AVIF or WebP, also generate a JPEG from the original image (not from the compressed file) for older browsers and social previews. The JPEG is stored in uploads and linked to the attachment - it does not appear as a separate Media Library item. Transparent areas are flattened onto the background color below.', 'menagerie'),
 			$settings
 		);
 		$this->number_row(
 			'jpeg_companion_quality',
-			__('JPEG companion quality (1–100)', 'menagerie'),
+			__('JPEG companion quality (1-100)', 'menagerie'),
 			1,
 			100,
 			$settings,

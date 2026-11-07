@@ -96,7 +96,7 @@ final class ServerFallbackOptimizer {
 			return $metadata;
 		}
 
-		// Third argument is $context ('create'|'update'), never a path — use attached file only.
+		// Third argument is $context ('create'|'update'), never a path - use attached file only.
 		$path = get_attached_file($id, true);
 		if (! is_string($path) || $path === '' || ! is_readable($path)) {
 			return $metadata;

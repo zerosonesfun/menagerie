@@ -1,5 +1,5 @@
 /**
- * Web Worker: WASM encode via jSquash — codecs loaded on demand.
+ * Web Worker: WASM encode via jSquash - codecs loaded on demand.
  *
  * @package Menagerie
  */

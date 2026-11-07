@@ -144,7 +144,7 @@ final class ImageEncoder {
 
 		foreach ($mimes as $mime) {
 			/*
-			 * AVIF / WebP: two attempts (fresh editor each time) — occasional Imagick/lib failures under memory pressure;
+			 * AVIF / WebP: two attempts (fresh editor each time) - occasional Imagick/lib failures under memory pressure;
 			 * matches client-side WASM retries for those codecs.
 			 */
 			$attempts = ($mime === 'image/avif' || $mime === 'image/webp') ? 2 : 1;

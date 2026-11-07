@@ -1,5 +1,5 @@
 /**
- * Menagerie — client-side image optimization before upload.
+ * Menagerie - client-side image optimization before upload.
  *
  * @package Menagerie
  */
@@ -511,10 +511,10 @@ import { encodeInWorker } from './wasm-bridge.js';
 	}
 
 	/**
-	 * Native canvas AVIF — quality ladder then type-only, for browsers that encode AVIF but not via WASM.
+	 * Native canvas AVIF - quality ladder then type-only, for browsers that encode AVIF but not via WASM.
 	 *
 	 * @param {HTMLCanvasElement} canvasEl
-	 * @param {number} q 0–1
+	 * @param {number} q 0-1
 	 * @returns {Promise<{blob: Blob, mime: string}|null>}
 	 */
 	function canvasToBlobAvifNative(canvasEl, q) {
@@ -549,10 +549,10 @@ import { encodeInWorker } from './wasm-bridge.js';
 	}
 
 	/**
-	 * Native canvas WebP — quality ladder then type-only (browsers vary on which quality they accept).
+	 * Native canvas WebP - quality ladder then type-only (browsers vary on which quality they accept).
 	 *
 	 * @param {HTMLCanvasElement} canvasEl
-	 * @param {number} q 0–1
+	 * @param {number} q 0-1
 	 * @returns {Promise<{blob: Blob, mime: string}|null>}
 	 */
 	function canvasToBlobWebpNative(canvasEl, q) {
@@ -1288,7 +1288,7 @@ import { encodeInWorker } from './wasm-bridge.js';
 				return fetchWithOptimizedFormData(origFetch, input, init, init.body);
 			}
 
-			/* fetch(Request) with FormData only on the Request — no init.body to read synchronously. */
+			/* fetch(Request) with FormData only on the Request - no init.body to read synchronously. */
 			if (input instanceof Request && (!init || init.body === undefined)) {
 				return input
 					.clone()

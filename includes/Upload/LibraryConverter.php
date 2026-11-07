@@ -180,7 +180,7 @@ final class LibraryConverter {
 		if (in_array($new_mime, [ 'image/avif', 'image/webp' ], true)) {
 			$this->companion->ensure_from_attachment($attachment_id);
 		} else {
-			// Primary is no longer modern — drop any leftover companion file/meta.
+			// Primary is no longer modern - drop any leftover companion file/meta.
 			$this->companion->delete_for_attachment($attachment_id);
 		}
 

@@ -97,7 +97,7 @@ function encodeInWorkerOnce(imageData, mime, qualityPercent) {
 /**
  * @param {ImageData} imageData
  * @param {string} mime image/webp | image/jpeg | image/avif
- * @param {number} qualityPercent 1–100
+ * @param {number} qualityPercent 1-100
  * @returns {Promise<ArrayBuffer|null>}
  */
 export function encodeInWorker(imageData, mime, qualityPercent) {
