@@ -45,8 +45,17 @@ final class Plugin {
 		$meta = $this->container->get(Upload\MetaHandler::class);
 		add_action('init', [$meta, 'register']);
 
+		$jpeg_companion = $this->container->get(Upload\JpegCompanion::class);
+		add_action('init', [$jpeg_companion, 'register']);
+
 		$server_fallback = $this->container->get(Upload\ServerFallbackOptimizer::class);
 		add_action('init', [$server_fallback, 'register']);
+
+		$picture = $this->container->get(Frontend\PictureFallback::class);
+		$picture->register();
+
+		$og = $this->container->get(Frontend\OpenGraph::class);
+		$og->register();
 
 		/*
 		 * WordPress 7.1+ client-side media processing (wasm-vips) overlaps with Menagerie’s

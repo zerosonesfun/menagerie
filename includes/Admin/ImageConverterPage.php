@@ -66,7 +66,7 @@ final class ImageConverterPage {
 		echo '<div class="wrap menagerie-converter-wrap">';
 		echo '<h1>' . esc_html__('Image Converter', 'menagerie') . '</h1>';
 		echo '<p class="description">' . esc_html__(
-			'Convert existing Media Library images to one format. Quality, max dimensions, and “Convert when useful” follow Settings → Menagerie. GIF and SVG files are skipped. JPEG flattens transparency.',
+			'Convert existing Media Library images to one format. Quality, max dimensions, and “Convert when useful” follow Settings → Menagerie. GIF and SVG files are skipped. JPEG flattens transparency. When JPEG companion is enabled in Settings, AVIF/WebP conversions also generate a public JPEG fallback file (not a Media Library item).',
 			'menagerie'
 		) . '</p>';
 

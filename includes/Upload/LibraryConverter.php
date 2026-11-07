@@ -20,7 +20,8 @@ final class LibraryConverter {
 
 	public function __construct(
 		private Registry $registry,
-		private ImageEncoder $encoder
+		private ImageEncoder $encoder,
+		private JpegCompanion $companion
 	) {
 	}
 
@@ -117,6 +118,11 @@ final class LibraryConverter {
 				@unlink($new_path);
 			}
 
+			// Fill a missing companion when the library file is already modern.
+			if (in_array($mime_in, [ 'image/avif', 'image/webp' ], true)) {
+				$this->companion->maybe_ensure_missing($attachment_id);
+			}
+
 			return [
 				'status'         => 'skipped',
 				'message'        => __('Already small enough; left unchanged.', 'menagerie'),
@@ -170,6 +176,13 @@ final class LibraryConverter {
 		);
 
 		$this->encoder->write_success_meta($attachment_id, $original_bytes, $new_size, $new_mime, false);
+
+		if (in_array($new_mime, [ 'image/avif', 'image/webp' ], true)) {
+			$this->companion->ensure_from_attachment($attachment_id);
+		} else {
+			// Primary is no longer modern — drop any leftover companion file/meta.
+			$this->companion->delete_for_attachment($attachment_id);
+		}
 
 		return [
 			'status'         => 'converted',

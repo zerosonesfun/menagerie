@@ -32,6 +32,9 @@ import { encodeInWorker } from './wasm-bridge.js';
 	 * @property {Object} [strings]
 	 * @property {boolean} [wasmEncoders]
 	 * @property {boolean} [serverSideOnly]
+	 * @property {boolean} [jpegCompanion]
+	 * @property {number} [jpegCompanionQuality]
+	 * @property {string} [jpegCompanionBg]
 	 */
 
 	function str(key, fallback) {
@@ -697,9 +700,123 @@ import { encodeInWorker } from './wasm-bridge.js';
 		return flat;
 	}
 
+	function shouldMakeJpegCompanion(mode) {
+		return !!C.jpegCompanion && mode !== 'jpeg';
+	}
+
+	function companionQualityPercent() {
+		var q = C.jpegCompanionQuality;
+		if (typeof q !== 'number' || isNaN(q)) {
+			q = 75;
+		}
+		return Math.min(100, Math.max(1, Math.round(q)));
+	}
+
+	function companionBackground() {
+		var bg = C.jpegCompanionBg;
+		if (typeof bg !== 'string') {
+			return '#ffffff';
+		}
+		if (/^#[0-9A-Fa-f]{6}$/.test(bg)) {
+			return bg;
+		}
+		// Expand #rgb → #rrggbb (matches WP sanitize_hex_color).
+		if (/^#[0-9A-Fa-f]{3}$/.test(bg)) {
+			return '#' + bg[1] + bg[1] + bg[2] + bg[2] + bg[3] + bg[3];
+		}
+		return '#ffffff';
+	}
+
+	/**
+	 * JPEG companion from the decoded bitmap, clamped to Menagerie max dimensions.
+	 * Never throws.
+	 *
+	 * @param {HTMLCanvasElement} sourceCanvas
+	 * @returns {Promise<Blob|null>}
+	 */
+	function encodeJpegCompanion(sourceCanvas) {
+		try {
+			var maxW = C.maxWidth || 2560;
+			var maxH = C.maxHeight || 2560;
+			var sw = sourceCanvas.width;
+			var sh = sourceCanvas.height;
+			var scale = Math.min(maxW / sw, maxH / sh, 1);
+			var dw = Math.max(1, Math.round(sw * scale));
+			var dh = Math.max(1, Math.round(sh * scale));
+
+			var flat = document.createElement('canvas');
+			flat.width = dw;
+			flat.height = dh;
+			var f = get2dContext(flat, false);
+			if (!f) {
+				return Promise.resolve(null);
+			}
+			applyHighQualityScaling(f);
+			f.fillStyle = companionBackground();
+			f.fillRect(0, 0, flat.width, flat.height);
+			f.drawImage(sourceCanvas, 0, 0, sw, sh, 0, 0, dw, dh);
+
+			var qp = companionQualityPercent();
+			var q = qp / 100;
+
+			function cleanupFlat() {
+				try {
+					flat.width = 0;
+					flat.height = 0;
+				} catch (eClean) {
+					/* ignore */
+				}
+			}
+
+			function encodeNative() {
+				return canvasToBlob(flat, 'image/jpeg', q)
+					.then(function (blob) {
+						cleanupFlat();
+						if (!blob || blob.type !== 'image/jpeg') {
+							return null;
+						}
+						return blob;
+					})
+					.catch(function () {
+						cleanupFlat();
+						return null;
+					});
+			}
+
+			if (!C.wasmEncoders) {
+				return encodeNative();
+			}
+
+			var ctx = get2dContext(flat, true);
+			if (!ctx) {
+				return encodeNative();
+			}
+			var id;
+			try {
+				id = ctx.getImageData(0, 0, flat.width, flat.height);
+			} catch (eId) {
+				return encodeNative();
+			}
+
+			return encodeInWorker(id, 'image/jpeg', qp)
+				.then(function (ab) {
+					if (ab) {
+						cleanupFlat();
+						return new Blob([ab], { type: 'image/jpeg' });
+					}
+					return encodeNative();
+				})
+				.catch(function () {
+					return encodeNative();
+				});
+		} catch (e) {
+			return Promise.resolve(null);
+		}
+	}
+
 	/**
 	 * @param {File} file
-	 * @returns {Promise<{blob: Blob, mime: string, skipped: boolean}>}
+	 * @returns {Promise<{blob: Blob, mime: string, skipped: boolean, jpegCompanion?: Blob|null}>}
 	 */
 	function optimizeImageFile(file) {
 		if (!shouldOptimizeRaster(file)) {
@@ -729,30 +846,42 @@ import { encodeInWorker } from './wasm-bridge.js';
 				applyHighQualityScaling(octx);
 				octx.drawImage(b.canvas, 0, 0, w, h, 0, 0, nw, nh);
 
-				try {
-					b.canvas.width = 0;
-					b.canvas.height = 0;
-				} catch (e2) {
-					/* ignore */
-				}
-
 				var hasAlpha = sampleHasAlpha(octx, nw, nh);
 				var preserve = !!C.preserveTransparency;
 				var mode = C.formatMode || 'auto';
 				var q = (C.quality || 85) / 100;
+				var plan = pickOutputTypes(mode, hasAlpha, preserve);
 
 				if (C.convertWhenUseful && file.size < SMALL_FILE_BYTES && scale >= 1) {
-					return Promise.resolve({ blob: file, mime: file.type || 'application/octet-stream', skipped: true });
+					try {
+						b.canvas.width = 0;
+						b.canvas.height = 0;
+					} catch (eSkip) {
+						/* ignore */
+					}
+					return { blob: file, mime: file.type || 'application/octet-stream', skipped: true };
 				}
 
-				var plan = pickOutputTypes(mode, hasAlpha, preserve);
+				var planMayBeModern =
+					plan.types.indexOf('image/avif') !== -1 || plan.types.indexOf('image/webp') !== -1;
+				var companionPromise =
+					shouldMakeJpegCompanion(mode) && planMayBeModern
+						? encodeJpegCompanion(b.canvas).catch(function () {
+								return null;
+						  })
+						: Promise.resolve(null);
+
 				var canvasEl = out;
 				if (plan.flatten) {
 					canvasEl = flattenCanvas(out);
 				}
 
-				return encodeFirstWorking(canvasEl, plan.types, q).then(function (res) {
+				return Promise.all([companionPromise, encodeFirstWorking(canvasEl, plan.types, q)]).then(function (pair) {
+					var companionBlob = pair[0];
+					var res = pair[1];
 					try {
+						b.canvas.width = 0;
+						b.canvas.height = 0;
 						if (canvasEl !== out) {
 							canvasEl.width = 0;
 							canvasEl.height = 0;
@@ -762,7 +891,16 @@ import { encodeInWorker } from './wasm-bridge.js';
 					} catch (e3) {
 						/* ignore */
 					}
-					return { blob: res.blob, mime: res.mime, skipped: false };
+					var attachCompanion =
+						companionBlob &&
+						companionBlob.type === 'image/jpeg' &&
+						(res.mime === 'image/avif' || res.mime === 'image/webp');
+					return {
+						blob: res.blob,
+						mime: res.mime,
+						skipped: false,
+						jpegCompanion: attachCompanion ? companionBlob : null,
+					};
 				});
 			});
 	}
@@ -815,6 +953,9 @@ import { encodeInWorker } from './wasm-bridge.js';
 					toasts.show(str('optimized', 'Image optimized, you may submit.'), 'success');
 				}
 				/** @type {*} */ (outFile).menagerieMeta = buildMetaPayload(origSize, outFile.size, res.mime, true);
+				if (res.jpegCompanion && res.jpegCompanion.type === 'image/jpeg') {
+					/** @type {*} */ (outFile).menagerieJpegCompanion = res.jpegCompanion;
+				}
 				return outFile;
 			})
 			.catch(function () {
@@ -996,6 +1137,8 @@ import { encodeInWorker } from './wasm-bridge.js';
 			if (idx >= pairs.length) {
 				var out = new FormData();
 				var meta = null;
+				var jpegCompanion = null;
+				var companionName = 'menagerie-fb.jpg';
 				for (var j = 0; j < pairs.length; j++) {
 					var p = pairs[j];
 					if (p.value instanceof File) {
@@ -1004,12 +1147,21 @@ import { encodeInWorker } from './wasm-bridge.js';
 						if (typeof m === 'string') {
 							meta = m;
 						}
+						var jc = /** @type {*} */ (p.value).menagerieJpegCompanion;
+						if (jc && typeof Blob !== 'undefined' && jc instanceof Blob && jc.type === 'image/jpeg') {
+							jpegCompanion = jc;
+							var base = typeof p.value.name === 'string' ? p.value.name.replace(/\.[^.]+$/, '') : '';
+							companionName = (base || 'image') + '-menagerie-fb.jpg';
+						}
 					} else {
 						out.append(p.key, p.value);
 					}
 				}
 				if (meta) {
 					out.set('menagerie_meta', meta);
+				}
+				if (jpegCompanion) {
+					out.append('menagerie_jpeg_companion', jpegCompanion, companionName);
 				}
 				return Promise.resolve(out);
 			}

@@ -56,16 +56,24 @@ final class Container {
 			Upload\ImageEncoder::class => static function (self $c): Upload\ImageEncoder {
 				return new Upload\ImageEncoder();
 			},
+			Upload\JpegCompanion::class => static function (self $c): Upload\JpegCompanion {
+				return new Upload\JpegCompanion(
+					$c->get(Settings\Registry::class),
+					$c->get(Upload\ImageEncoder::class)
+				);
+			},
 			Upload\LibraryConverter::class => static function (self $c): Upload\LibraryConverter {
 				return new Upload\LibraryConverter(
 					$c->get(Settings\Registry::class),
-					$c->get(Upload\ImageEncoder::class)
+					$c->get(Upload\ImageEncoder::class),
+					$c->get(Upload\JpegCompanion::class)
 				);
 			},
 			Upload\ServerFallbackOptimizer::class => static function (self $c): Upload\ServerFallbackOptimizer {
 				return new Upload\ServerFallbackOptimizer(
 					$c->get(Settings\Registry::class),
-					$c->get(Upload\ImageEncoder::class)
+					$c->get(Upload\ImageEncoder::class),
+					$c->get(Upload\JpegCompanion::class)
 				);
 			},
 			Admin\ImageConverterPage::class => static function (self $c): Admin\ImageConverterPage {
@@ -77,6 +85,18 @@ final class Container {
 				return new Admin\ImageConverterAjax(
 					$c->get(Upload\ImageEncoder::class),
 					$c->get(Upload\LibraryConverter::class)
+				);
+			},
+			Frontend\PictureFallback::class => static function (self $c): Frontend\PictureFallback {
+				return new Frontend\PictureFallback(
+					$c->get(Settings\Registry::class),
+					$c->get(Upload\JpegCompanion::class)
+				);
+			},
+			Frontend\OpenGraph::class => static function (self $c): Frontend\OpenGraph {
+				return new Frontend\OpenGraph(
+					$c->get(Settings\Registry::class),
+					$c->get(Upload\JpegCompanion::class)
 				);
 			},
 			I18n::class => static function (self $c): I18n {

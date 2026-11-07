@@ -45,6 +45,11 @@ final class Registry {
 			'wasm_encoders'         => false,
 			'server_side_fallback'  => false,
 			'server_side_only'      => false,
+			'jpeg_companion'        => true,
+			'jpeg_companion_quality'=> 75,
+			'jpeg_companion_bg'     => '#ffffff',
+			'picture_fallback'      => true,
+			'og_jpeg_companion'     => true,
 		];
 	}
 
@@ -95,6 +100,9 @@ final class Registry {
 		$out['wasm_encoders']         = ! empty($merged['wasm_encoders']);
 		$out['server_side_fallback']  = ! empty($merged['server_side_fallback']);
 		$out['server_side_only']      = ! empty($merged['server_side_only']);
+		$out['jpeg_companion']        = ! empty($merged['jpeg_companion']);
+		$out['picture_fallback']      = ! empty($merged['picture_fallback']);
+		$out['og_jpeg_companion']     = ! empty($merged['og_jpeg_companion']);
 
 		$mode = isset($merged['format_mode']) ? (string) $merged['format_mode'] : 'auto';
 		$out['format_mode'] = in_array($mode, ['auto', 'webp', 'jpeg'], true) ? $mode : 'auto';
@@ -105,12 +113,32 @@ final class Registry {
 		$q = isset($merged['quality']) ? (int) $merged['quality'] : (int) $defaults['quality'];
 		$out['quality'] = min(100, max(1, $q));
 
+		$jq = isset($merged['jpeg_companion_quality']) ? (int) $merged['jpeg_companion_quality'] : (int) $defaults['jpeg_companion_quality'];
+		$out['jpeg_companion_quality'] = min(100, max(1, $jq));
+
+		$out['jpeg_companion_bg'] = $this->sanitize_hex_color_value($merged['jpeg_companion_bg'] ?? null, (string) $defaults['jpeg_companion_bg']);
+
 		$out['toast_optimizing'] = $this->sanitize_toast_text($merged['toast_optimizing'] ?? null);
 		$out['toast_optimized']  = $this->sanitize_toast_text($merged['toast_optimized'] ?? null);
 		$out['toast_fallback']   = $this->sanitize_toast_text($merged['toast_fallback'] ?? null);
 		$out['toast_dismiss']    = $this->sanitize_toast_text($merged['toast_dismiss'] ?? null);
 
 		return $out;
+	}
+
+	private function sanitize_hex_color_value(mixed $raw, string $fallback): string {
+		if (! is_string($raw) || $raw === '') {
+			return $fallback;
+		}
+		$sanitized = sanitize_hex_color($raw);
+		if (! is_string($sanitized) || $sanitized === '') {
+			return $fallback;
+		}
+		// Normalize #abc → #aabbcc for consistent client/server use.
+		if (strlen($sanitized) === 4) {
+			$sanitized = '#' . $sanitized[1] . $sanitized[1] . $sanitized[2] . $sanitized[2] . $sanitized[3] . $sanitized[3];
+		}
+		return $sanitized;
 	}
 
 	private function sanitize_toast_text(mixed $raw): string {

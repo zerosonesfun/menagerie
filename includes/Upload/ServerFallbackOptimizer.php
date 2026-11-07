@@ -20,8 +20,16 @@ final class ServerFallbackOptimizer {
 
 	public function __construct(
 		private Registry $registry,
-		private ImageEncoder $encoder
+		private ImageEncoder $encoder,
+		private JpegCompanion $companion
 	) {
+	}
+
+	/**
+	 * Whether a metadata pass is nested inside server-side fallback optimization.
+	 */
+	public static function is_recursing(): bool {
+		return self::$recursing;
 	}
 
 	public function register(): void {
@@ -170,6 +178,13 @@ final class ServerFallbackOptimizer {
 		);
 
 		$this->encoder->write_success_meta($id, $original_bytes, $new_size, $new_mime);
+
+		if (in_array($new_mime, [ 'image/avif', 'image/webp' ], true)) {
+			// Keep a browser-uploaded companion when present; only fill gaps.
+			$this->companion->maybe_ensure_missing($id);
+		} else {
+			$this->companion->delete_for_attachment($id);
+		}
 
 		return $new_metadata;
 	}

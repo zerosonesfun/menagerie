@@ -25,4 +25,10 @@ final class MetaKeys {
 	public const PROCESSED_AT = '_menagerie_processed_at';
 
 	public const SERVER_FALLBACK = '_menagerie_server_fallback';
+
+	public const JPEG_RELATIVE = '_menagerie_jpeg_relative';
+
+	public const JPEG_WIDTH = '_menagerie_jpeg_width';
+
+	public const JPEG_HEIGHT = '_menagerie_jpeg_height';
 }

@@ -29,8 +29,53 @@ final class Notices {
 	}
 
 	public function register(): void {
+		add_action('admin_notices', [$this, 'render_editor_capability_notice']);
 		add_action('admin_notices', [$this, 'render']);
 		add_action('wp_ajax_' . self::AJAX_ACTION, [$this, 'ajax_dismiss']);
+	}
+
+	/**
+	 * Warn when the selected modern format may not get WordPress intermediate sizes.
+	 */
+	public function render_editor_capability_notice(): void {
+		if (! current_user_can('manage_options')) {
+			return;
+		}
+
+		$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+		if (! $screen || ! in_array($screen->id, [ 'settings_page_menagerie', 'tools_page_menagerie-image-converter' ], true)) {
+			return;
+		}
+
+		$settings = $this->registry->get();
+		$mode     = (string) ($settings['format_mode'] ?? 'auto');
+		$needed   = [];
+		if ($mode === 'auto' || $mode === 'webp') {
+			$needed[] = 'image/webp';
+		}
+		if ($mode === 'auto' || $mode === 'avif') {
+			$needed[] = 'image/avif';
+		}
+
+		$missing = [];
+		foreach ($needed as $mime) {
+			if (! wp_image_editor_supports([ 'mime_type' => $mime ])) {
+				$missing[] = $mime === 'image/avif' ? 'AVIF' : 'WebP';
+			}
+		}
+		if ($missing === []) {
+			return;
+		}
+
+		echo '<div class="notice notice-warning"><p>';
+		echo esc_html(
+			sprintf(
+				/* translators: %s: comma-separated format names */
+				__('Menagerie: this server cannot encode %s for intermediate sizes (thumbnails). Browser uploads of those formats may still work, but WordPress may not generate all resized versions. Check Tools → Site Health → Info → Media handling.', 'menagerie'),
+				implode(', ', $missing)
+			)
+		);
+		echo '</p></div>';
 	}
 
 	public function render(): void {

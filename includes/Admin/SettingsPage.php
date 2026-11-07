@@ -108,6 +108,38 @@ final class SettingsPage {
 			$settings
 		);
 		$this->checkbox_row('preserve_transparency', __('Preserve transparency when possible', 'menagerie'), __('When off, transparent images may be flattened for JPEG.', 'menagerie'), $settings);
+		$this->checkbox_row(
+			'jpeg_companion',
+			__('JPEG companion (browser fallback)', 'menagerie'),
+			__('When the primary upload is AVIF or WebP, also generate a JPEG from the original image (not from the compressed file) for older browsers and social previews. The JPEG is stored in uploads and linked to the attachment—it does not appear as a separate Media Library item. Transparent areas are flattened onto the background color below.', 'menagerie'),
+			$settings
+		);
+		$this->number_row(
+			'jpeg_companion_quality',
+			__('JPEG companion quality (1–100)', 'menagerie'),
+			1,
+			100,
+			$settings,
+			__('Default 75. Used only for the companion JPEG, not for primary AVIF/WebP quality.', 'menagerie')
+		);
+		$this->text_row(
+			'jpeg_companion_bg',
+			__('JPEG companion background', 'menagerie'),
+			$settings,
+			__('Hex color used when flattening transparency for the companion JPEG (default #ffffff).', 'menagerie')
+		);
+		$this->checkbox_row(
+			'picture_fallback',
+			__('Automatic picture fallback', 'menagerie'),
+			__('Wrap standard WordPress images that have a JPEG companion in a <picture> element so supporting browsers get AVIF/WebP and others get JPEG.', 'menagerie'),
+			$settings
+		);
+		$this->checkbox_row(
+			'og_jpeg_companion',
+			__('Open Graph uses JPEG companion', 'menagerie'),
+			__('Prefer the JPEG companion for og:image (featured image first). Avoids AVIF/WebP in social previews when a companion exists.', 'menagerie'),
+			$settings
+		);
 		$this->checkbox_row('show_toasts', __('Show toast notifications', 'menagerie'), __('Brief status messages during optimization.', 'menagerie'), $settings);
 
 		echo '<tr class="menagerie-toast-texts"><th scope="row">' . esc_html__('Toast message text', 'menagerie') . '</th><td>';
@@ -214,6 +246,25 @@ final class SettingsPage {
 			$min,
 			$max,
 			$val
+		);
+		if ($help !== null && $help !== '') {
+			echo '<p class="description">' . esc_html($help) . '</p>';
+		}
+		echo '</td></tr>';
+	}
+
+	/**
+	 * @param array<string, mixed> $settings
+	 */
+	private function text_row(string $key, string $label, array $settings, ?string $help = null): void {
+		$name = Registry::OPTION_NAME . '[' . $key . ']';
+		$val  = isset($settings[ $key ]) ? (string) $settings[ $key ] : '';
+		echo '<tr><th scope="row"><label for="menagerie-' . esc_attr($key) . '">' . esc_html($label) . '</label></th><td>';
+		printf(
+			'<input type="text" class="regular-text" name="%1$s" id="menagerie-%2$s" value="%3$s" pattern="#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?" maxlength="7" />',
+			esc_attr($name),
+			esc_attr($key),
+			esc_attr($val)
 		);
 		if ($help !== null && $help !== '') {
 			echo '<p class="description">' . esc_html($help) . '</p>';
