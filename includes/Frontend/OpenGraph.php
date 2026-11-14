@@ -72,6 +72,10 @@ final class OpenGraph {
 
 		// Jetpack (also used by Architrave Extras sharing / link previews).
 		add_filter('jetpack_open_graph_tags', [$this, 'filter_jetpack_open_graph_tags'], 20, 2);
+
+		// SEOPress (emits full meta HTML via these filters; used on wilcosky.com).
+		add_filter('seopress_social_og_thumb', [$this, 'filter_seopress_thumb_html'], 20);
+		add_filter('seopress_social_twitter_card_thumb', [$this, 'filter_seopress_thumb_html'], 20);
 	}
 
 	/**
@@ -119,6 +123,19 @@ final class OpenGraph {
 		}
 
 		return $html;
+	}
+
+	/**
+	 * SEOPress passes assembled OG/Twitter image meta HTML (not a bare URL).
+	 *
+	 * @param mixed $html Meta HTML.
+	 * @return mixed
+	 */
+	public function filter_seopress_thumb_html($html) {
+		if (! $this->og_enabled() || ! is_string($html) || $html === '') {
+			return $html;
+		}
+		return $this->rewrite_head_image_metas($html);
 	}
 
 	/**

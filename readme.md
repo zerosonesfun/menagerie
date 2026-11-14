@@ -5,7 +5,7 @@
 **Requires WordPress:** 7.1+  
 **Tested up to:** 7.1  
 **Requires PHP:** 8.0+  
-**Stable tag:** 2.0.2  
+**Stable tag:** 2.0.3  
 **License:** [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html)
 
 Optional WebP/AVIF upload conversion, JPEG companions, picture/OG fallback, and bulk library conversion for WordPress 7.1+.
@@ -59,6 +59,10 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 **Tools → Image Converter**. Pick a format and run the batch. Quality and “Convert when useful” are in Settings → Menagerie.
 
 ## Changelog
+
+### 2.0.3
+
+- Open Graph: add SEOPress support (`seopress_social_og_thumb` / Twitter thumb filters) — SEOPress was emitting AVIF og:image HTML that prior versions never rewrote at the filter layer.
 
 ### 2.0.2
 

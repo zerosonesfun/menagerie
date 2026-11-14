@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Create a distributable zip for manual / GitHub releases.
 #
-# - Zip filename includes the version: menagerie-2.0.2.zip
+# - Zip filename includes the version: menagerie-2.0.3.zip
 # - Folder inside the zip is always "menagerie" (never versioned) so WordPress
 #   updates replace the same plugin directory and keep working.
 set -euo pipefail
