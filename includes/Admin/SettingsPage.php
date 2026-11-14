@@ -106,7 +106,7 @@ final class SettingsPage {
 		$this->checkbox_row(
 			'og_jpeg_companion',
 			__('Open Graph uses JPEG companion', 'menagerie'),
-			__('Prefer the full-size JPEG companion for og:image when the SEO image maps to that attachment.', 'menagerie'),
+			__('Replace an existing og:image / Twitter image URL with the full-size JPEG companion when that URL maps to the attachment (SEO plugins, Jetpack, or other head output). If nothing else prints og:image, Menagerie adds one.', 'menagerie'),
 			$settings
 		);
 

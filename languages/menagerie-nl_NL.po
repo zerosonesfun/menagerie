@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Menagerie 2.0.0\n"
+"Project-Id-Version: Menagerie 2.0.1\n"
 "Report-Msgid-Bugs-To: https://wilcosky.com\n"
 "POT-Creation-Date: 2026-11-07\n"
 "PO-Revision-Date: 2026-11-07 12:00-0500\n"
@@ -196,8 +196,8 @@ msgid "Open Graph uses JPEG companion"
 msgstr "Open Graph gebruikt JPEG-companion"
 
 #: includes/Admin/SettingsPage.php:109
-msgid "Prefer the full-size JPEG companion for og:image when the SEO image maps to that attachment."
-msgstr "Geef de voorkeur aan de JPEG-companion op volledige grootte voor og:image wanneer de SEO-afbeelding bij die bijlage hoort."
+msgid "Replace an existing og:image / Twitter image URL with the full-size JPEG companion when that URL maps to the attachment (SEO plugins, Jetpack, or other head output). If nothing else prints og:image, Menagerie adds one."
+msgstr "Vervangt een bestaande og:image- / Twitter-afbeeldings-URL door de JPEG-companion op volledige grootte wanneer die URL bij de bijlage hoort (SEO-plugins, Jetpack of andere head-output). Als niets anders og:image print, voegt Menagerie er een toe."
 
 #: includes/Admin/SettingsPage.php:113
 msgid "Upload toasts"

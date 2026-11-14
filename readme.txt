@@ -4,7 +4,7 @@ Tags: images, jpeg, webp, avif, media, companion, fallback
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,7 +19,7 @@ Menagerie by Billy Wilcosky (https://wilcosky.com) is the compatibility layer ar
 * Menagerie adds JPEG companions for older browsers and social previews
 * Editable admin and front-end upload toasts so you can see what format uploaded
 * Automatic `<picture>` fallback (modern srcset + JPEG fallback srcset)
-* Open Graph prefers the full JPEG companion when the SEO image maps to that attachment
+* Open Graph replaces existing og:image / Twitter image URLs with the JPEG companion when they map to that attachment (SEO plugins, Jetpack, or other head output)
 * Tools → Image Converter for bulk Media Library format conversion
 
 No outside encode services - everything stays on your site.
@@ -59,6 +59,10 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 **Tools → Image Converter**. Pick a format and run the batch. Quality and “Convert when useful” are in Settings → Menagerie.
 
 == Changelog ==
+
+= 2.0.1 =
+* Open Graph: rewrite existing og:image / Twitter image metas in place (Jetpack, themes, SEO plugins) instead of printing a duplicate JPEG tag after an AVIF one.
+* Native OG image tags only when nothing else already printed og:image.
 
 = 2.0.0 =
 * Pivot to WordPress 7.1+ media companion: remove client-side upload optimizer/WASM/conflict detector and CSMP disable filter.
@@ -108,6 +112,9 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 * Idle-time encoder prewarm (native probes; WASM AVIF touch when Advanced encoders are on).
 
 == Upgrade Notice ==
+
+= 2.0.1 =
+Fixes Open Graph so social previews use the JPEG companion when a theme or Jetpack already prints og:image as AVIF/WebP.
 
 = 2.0.0 =
 Requires WordPress 7.1+. Optional WebP/AVIF upload conversion via WordPress’s native format filter; JPEG companions, picture/OG fallback, and Image Converter.

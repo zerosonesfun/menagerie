@@ -391,14 +391,14 @@ add(
 	ja="Open Graph は JPEG コンパニオンを使用",
 )
 add(
-	"Prefer the full-size JPEG companion for og:image when the SEO image maps to that attachment.",
-	es_ES="Prefiere el compañero JPEG a tamaño completo para og:image cuando la imagen SEO corresponde a ese adjunto.",
-	fr_FR="Préfère le compagnon JPEG pleine taille pour og:image lorsque l’image SEO correspond à ce média.",
-	de_DE="Bevorzugt den vollständigen JPEG-Begleiter für og:image, wenn das SEO-Bild diesem Anhang zugeordnet ist.",
-	nl_NL="Geef de voorkeur aan de JPEG-companion op volledige grootte voor og:image wanneer de SEO-afbeelding bij die bijlage hoort.",
-	ru_RU="Предпочитает полноразмерный JPEG-компаньон для og:image, когда SEO-изображение соответствует этому вложению.",
-	zh_CN="当 SEO 图片对应该附件时，优先将完整尺寸的 JPEG 配套用于 og:image。",
-	ja="SEO 画像がその添付ファイルに対応する場合、og:image にはフルサイズの JPEG コンパニオンを優先します。",
+	"Replace an existing og:image / Twitter image URL with the full-size JPEG companion when that URL maps to the attachment (SEO plugins, Jetpack, or other head output). If nothing else prints og:image, Menagerie adds one.",
+	es_ES="Sustituye una URL og:image / imagen de Twitter existente por el compañero JPEG a tamaño completo cuando esa URL corresponde al adjunto (plugins SEO, Jetpack u otra salida en el head). Si nada más imprime og:image, Menagerie añade una.",
+	fr_FR="Remplace une URL og:image / image Twitter existante par le compagnon JPEG pleine taille lorsque cette URL correspond au média (plugins SEO, Jetpack ou autre sortie dans le head). Si rien d’autre n’affiche og:image, Menagerie en ajoute une.",
+	de_DE="Ersetzt eine vorhandene og:image- / Twitter-Bild-URL durch den vollständigen JPEG-Begleiter, wenn diese URL dem Anhang zugeordnet ist (SEO-Plugins, Jetpack oder andere Head-Ausgabe). Wenn nichts anderes og:image ausgibt, fügt Menagerie eines hinzu.",
+	nl_NL="Vervangt een bestaande og:image- / Twitter-afbeeldings-URL door de JPEG-companion op volledige grootte wanneer die URL bij de bijlage hoort (SEO-plugins, Jetpack of andere head-output). Als niets anders og:image print, voegt Menagerie er een toe.",
+	ru_RU="Заменяет существующий URL og:image / изображения Twitter полноразмерным JPEG-компаньоном, когда этот URL соответствует вложению (SEO-плагины, Jetpack или другой вывод в head). Если больше никто не выводит og:image, Menagerie добавляет свой.",
+	zh_CN="当现有 og:image / Twitter 图片 URL 对应该附件时，将其替换为完整尺寸的 JPEG 配套（SEO 插件、Jetpack 或其他 head 输出）。如果没有其他地方输出 og:image，Menagerie 会添加一个。",
+	ja="既存の og:image / Twitter 画像 URL がその添付ファイルに対応する場合、フルサイズの JPEG コンパニオンに置き換えます（SEO プラグイン、Jetpack、その他の head 出力）。他に og:image を出力するものがなければ、Menagerie が追加します。",
 )
 add(
 	"Upload toasts",
@@ -1028,7 +1028,7 @@ def main() -> None:
 			"#",
 			'msgid ""',
 			'msgstr ""',
-			'"Project-Id-Version: Menagerie 2.0.0\\n"',
+			'"Project-Id-Version: Menagerie 2.0.1\\n"',
 			'"Report-Msgid-Bugs-To: https://wilcosky.com\\n"',
 			'"POT-Creation-Date: 2026-11-07\\n"',
 			'"PO-Revision-Date: 2026-11-07 12:00-0500\\n"',
