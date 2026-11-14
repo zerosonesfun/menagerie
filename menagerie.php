@@ -3,7 +3,7 @@
  * Plugin Name:       Menagerie
  * Plugin URI:        https://wilcosky.com
  * Description:       Optional WebP/AVIF upload conversion, JPEG companions, picture/OG fallback, and bulk library conversion for WordPress 7.1+.
- * Version:           2.0.3
+ * Version:           2.0.4
  * Requires at least: 7.1
  * Requires PHP:      8.0
  * Author:            Billy Wilcosky
@@ -24,7 +24,7 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-define('MENAGERIE_VERSION', '2.0.3');
+define('MENAGERIE_VERSION', '2.0.4');
 define('MENAGERIE_FILE', __FILE__);
 define('MENAGERIE_PATH', plugin_dir_path(__FILE__));
 define('MENAGERIE_URL', plugin_dir_url(__FILE__));

@@ -1028,7 +1028,7 @@ def main() -> None:
 			"#",
 			'msgid ""',
 			'msgstr ""',
-			'"Project-Id-Version: Menagerie 2.0.3\\n"',
+			'"Project-Id-Version: Menagerie 2.0.4\\n"',
 			'"Report-Msgid-Bugs-To: https://wilcosky.com\\n"',
 			'"POT-Creation-Date: 2026-11-07\\n"',
 			'"PO-Revision-Date: 2026-11-07 12:00-0500\\n"',

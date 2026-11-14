@@ -4,7 +4,7 @@ Tags: images, jpeg, webp, avif, media, companion, fallback
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.0.3
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,9 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 **Tools → Image Converter**. Pick a format and run the batch. Quality and “Convert when useful” are in Settings → Menagerie.
 
 == Changelog ==
+
+= 2.0.4 =
+* Open Graph: regenerate missing JPEG companions on demand when building og:image.
 
 = 2.0.3 =
 * Open Graph: add SEOPress support (seopress_social_og_thumb / Twitter thumb filters).
@@ -119,6 +122,9 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 * Idle-time encoder prewarm (native probes; WASM AVIF touch when Advanced encoders are on).
 
 == Upgrade Notice ==
+
+= 2.0.4 =
+Regenerates missing JPEG companions when Open Graph needs them (e.g. after uninstall or Media Cleaner).
 
 = 2.0.3 =
 Adds SEOPress Open Graph image rewriting so social previews use the JPEG companion.

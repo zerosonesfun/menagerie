@@ -483,7 +483,7 @@ final class OpenGraph {
 		}
 		$id = $this->attachment_id_from_url($url);
 		if ($id > 0) {
-			$info = $this->companion->get_info($id);
+			$info = $this->companion_info_or_ensure($id);
 			if ($info !== null) {
 				return $info;
 			}
@@ -530,7 +530,32 @@ final class OpenGraph {
 			}
 		}
 
-		return $this->companion->get_info($thumb_id);
+		return $this->companion_info_or_ensure($thumb_id);
+	}
+
+	/**
+	 * Prefer existing companion info; if missing for a modern image, regenerate once.
+	 *
+	 * Covers companions wiped by plugin uninstall, Media Cleaner "orphans", etc.
+	 *
+	 * @return array{url: string, width: int, height: int}|null
+	 */
+	private function companion_info_or_ensure(int $attachment_id): ?array {
+		if ($attachment_id <= 0) {
+			return null;
+		}
+
+		$info = $this->companion->get_info($attachment_id);
+		if ($info !== null) {
+			return $info;
+		}
+
+		if (! $this->companion->attachment_is_modern_image($attachment_id)) {
+			return null;
+		}
+
+		$this->companion->ensure_from_attachment($attachment_id);
+		return $this->companion->get_info($attachment_id);
 	}
 
 	/**
@@ -548,7 +573,7 @@ final class OpenGraph {
 		if ($thumb_id <= 0) {
 			return null;
 		}
-		return $this->companion->get_info($thumb_id);
+		return $this->companion_info_or_ensure($thumb_id);
 	}
 
 	/**
