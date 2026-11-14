@@ -4,7 +4,7 @@ Tags: images, jpeg, webp, avif, media, companion, fallback
 Requires at least: 7.1
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -60,6 +60,10 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 
 == Changelog ==
 
+= 2.0.2 =
+* Open Graph: harden attachment URL lookup (_wp_attached_file + featured basename match) so AVIF/WebP og:image URLs resolve to their JPEG companion.
+* Open Graph: rewrite via a full-page buffer so nested wp_head buffers from cache/SEO plugins cannot leave AVIF in place.
+
 = 2.0.1 =
 * Open Graph: rewrite existing og:image / Twitter image metas in place (Jetpack, themes, SEO plugins) instead of printing a duplicate JPEG tag after an AVIF one.
 * Native OG image tags only when nothing else already printed og:image.
@@ -112,6 +116,9 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 * Idle-time encoder prewarm (native probes; WASM AVIF touch when Advanced encoders are on).
 
 == Upgrade Notice ==
+
+= 2.0.2 =
+Fixes Open Graph JPEG companion replacement when attachment URL lookup fails or page cache nests output buffers.
 
 = 2.0.1 =
 Fixes Open Graph so social previews use the JPEG companion when a theme or Jetpack already prints og:image as AVIF/WebP.

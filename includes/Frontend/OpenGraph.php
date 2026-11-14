@@ -20,12 +20,7 @@ if (! defined('ABSPATH')) {
 }
 
 final class OpenGraph {
-	private bool $printed_native = false;
-
-	private bool $buffering_head = false;
-
-	/** Output buffering level of the wp_head capture, or 0 when inactive. */
-	private int $head_buffer_level = 0;
+	private bool $buffering_page = false;
 
 	private bool $saw_og_image = false;
 
@@ -55,9 +50,8 @@ final class OpenGraph {
 	}
 
 	public function register(): void {
-		// Early within wp_head so theme/plugin metas registered at default priorities are captured.
-		add_action('wp_head', [$this, 'start_head_buffer'], -999);
-		add_action('wp_head', [$this, 'flush_head_buffer'], PHP_INT_MAX);
+		// Full-page buffer so OG metas are rewritten even when cache/SEO plugins nest wp_head buffers.
+		add_action('template_redirect', [$this, 'start_page_buffer'], 0);
 
 		// Yoast SEO.
 		add_filter('wpseo_opengraph_image', [$this, 'filter_og_image_url'], 20);
@@ -81,54 +75,50 @@ final class OpenGraph {
 	}
 
 	/**
-	 * Begin capturing wp_head so foreign og:image tags can be rewritten in place.
+	 * Capture the full HTML response and rewrite image metas before send.
 	 */
-	public function start_head_buffer(): void {
-		if (! $this->og_enabled() || is_admin() || $this->buffering_head) {
+	public function start_page_buffer(): void {
+		if (! $this->og_enabled() || is_admin() || $this->buffering_page) {
 			return;
 		}
-		ob_start();
-		$this->head_buffer_level = ob_get_level();
-		$this->buffering_head    = true;
+		if (wp_doing_ajax() || wp_doing_cron() || is_feed()) {
+			return;
+		}
+		if (defined('REST_REQUEST') && REST_REQUEST) {
+			return;
+		}
+		if (defined('WP_CLI') && WP_CLI) {
+			return;
+		}
+
+		$this->buffering_page = true;
+		ob_start([ $this, 'rewrite_page_buffer' ]);
 	}
 
 	/**
-	 * Rewrite image metas in the captured head chunk; append native tags only if none existed.
+	 * @param string $html Full page HTML.
 	 */
-	public function flush_head_buffer(): void {
-		if (! $this->buffering_head) {
-			return;
-		}
-		$this->buffering_head = false;
-		$target_level         = $this->head_buffer_level;
-		$this->head_buffer_level = 0;
-
-		$level = ob_get_level();
-		if ($target_level < 1 || $level < $target_level) {
-			// Another layer closed or stole our buffer; do not echo empty and wipe the head.
-			return;
+	public function rewrite_page_buffer(string $html): string {
+		$this->buffering_page = false;
+		if ($html === '' || ! $this->og_enabled()) {
+			return $html;
 		}
 
-		// Collapse nested buffers started after ours into our capture.
-		while (ob_get_level() > $target_level) {
-			ob_end_flush();
+		$html = $this->rewrite_head_image_metas($html);
+
+		if (! $this->saw_og_image) {
+			$native = $this->native_tags_html();
+			if ($native !== '') {
+				$replaced = preg_replace('/<\/head>/i', $native . '</head>', $html, 1);
+				if (is_string($replaced)) {
+					$html = $replaced;
+				} else {
+					$html .= $native;
+				}
+			}
 		}
 
-		$html = ob_get_clean();
-		if (! is_string($html)) {
-			return;
-		}
-
-		if ($this->og_enabled() && $html !== '') {
-			$html = $this->rewrite_head_image_metas($html);
-		}
-
-		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- head HTML already emitted by core/plugins.
-
-		// Native tags only when nothing else printed og:image (avoids duplicates).
-		if ($this->og_enabled() && ! $this->saw_og_image) {
-			$this->print_native_tags();
-		}
+		return $html;
 	}
 
 	/**
@@ -436,32 +426,28 @@ final class OpenGraph {
 	}
 
 	/**
-	 * Print native JPEG companion OG tags when no foreign og:image was present.
+	 * Native JPEG companion OG tags markup when no foreign og:image was present.
 	 */
-	private function print_native_tags(): void {
-		if ($this->printed_native) {
-			return;
-		}
-
+	private function native_tags_html(): string {
 		$info = $this->resolve_companion_for_queried();
 		if ($info === null) {
-			return;
+			return '';
 		}
 
-		$this->printed_native = true;
-		$url = esc_url($this->absolute_url($info['url']));
-		echo '<meta property="og:image" content="' . $url . '" />' . "\n";
-		echo '<meta property="og:image:type" content="image/jpeg" />' . "\n";
+		$url  = esc_url($this->absolute_url($info['url']));
+		$html = '<meta property="og:image" content="' . $url . '" />' . "\n";
+		$html .= '<meta property="og:image:type" content="image/jpeg" />' . "\n";
 		if ($info['width'] > 0) {
-			echo '<meta property="og:image:width" content="' . esc_attr((string) $info['width']) . '" />' . "\n";
+			$html .= '<meta property="og:image:width" content="' . esc_attr((string) $info['width']) . '" />' . "\n";
 		}
 		if ($info['height'] > 0) {
-			echo '<meta property="og:image:height" content="' . esc_attr((string) $info['height']) . '" />' . "\n";
+			$html .= '<meta property="og:image:height" content="' . esc_attr((string) $info['height']) . '" />' . "\n";
 		}
 		$alt = $this->resolve_alt_for_queried();
 		if ($alt !== '') {
-			echo '<meta property="og:image:alt" content="' . esc_attr($alt) . '" />' . "\n";
+			$html .= '<meta property="og:image:alt" content="' . esc_attr($alt) . '" />' . "\n";
 		}
+		return $html;
 	}
 
 	private function og_enabled(): bool {
@@ -479,10 +465,55 @@ final class OpenGraph {
 			return null;
 		}
 		$id = $this->attachment_id_from_url($url);
-		if ($id <= 0) {
+		if ($id > 0) {
+			$info = $this->companion->get_info($id);
+			if ($info !== null) {
+				return $info;
+			}
+		}
+
+		// attachment_url_to_postid is often unreliable; still allow a safe featured match.
+		return $this->companion_for_url_via_featured($url);
+	}
+
+	/**
+	 * When URL→ID fails, use the featured image companion only if basenames match.
+	 *
+	 * @return array{url: string, width: int, height: int}|null
+	 */
+	private function companion_for_url_via_featured(string $url): ?array {
+		if (! is_singular()) {
 			return null;
 		}
-		return $this->companion->get_info($id);
+		$post_id = get_queried_object_id();
+		if ($post_id <= 0) {
+			return null;
+		}
+		$thumb_id = (int) get_post_thumbnail_id($post_id);
+		if ($thumb_id <= 0) {
+			return null;
+		}
+
+		$attached = get_attached_file($thumb_id, true);
+		if (! is_string($attached) || $attached === '') {
+			return null;
+		}
+
+		$url_path = wp_parse_url($this->normalize_lookup_url($url), PHP_URL_PATH);
+		if (! is_string($url_path) || $url_path === '') {
+			return null;
+		}
+
+		$url_base      = basename($url_path);
+		$attached_base = basename($attached);
+		if ($url_base !== $attached_base) {
+			$stripped = preg_replace('/-\d+x\d+(?=\.[a-zA-Z0-9]+$)/', '', $url_base);
+			if (! is_string($stripped) || $stripped !== $attached_base) {
+				return null;
+			}
+		}
+
+		return $this->companion->get_info($thumb_id);
 	}
 
 	/**
@@ -562,9 +593,82 @@ final class OpenGraph {
 			if ($id > 0) {
 				return $id;
 			}
+			$url_for_relative = $stripped;
+		} else {
+			$url_for_relative = $url;
+		}
+
+		// Direct _wp_attached_file lookup (more reliable than attachment_url_to_postid).
+		$relative = $this->uploads_relative_path($url_for_relative);
+		if ($relative !== null) {
+			$id = $this->attachment_id_from_relative($relative);
+			if ($id > 0) {
+				return $id;
+			}
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Path under uploads baseurl, or null when the URL is outside uploads.
+	 */
+	private function uploads_relative_path(string $url): ?string {
+		$uploads = wp_get_upload_dir();
+		if (! empty($uploads['error']) || empty($uploads['baseurl'])) {
+			return null;
+		}
+
+		$baseurl = untrailingslashit((string) $uploads['baseurl']);
+		$candidates = [ $baseurl ];
+		$alt = set_url_scheme($baseurl, str_starts_with($baseurl, 'https://') ? 'http' : 'https');
+		if (is_string($alt) && $alt !== $baseurl) {
+			$candidates[] = untrailingslashit($alt);
+		}
+
+		foreach ($candidates as $base) {
+			$prefix = $base . '/';
+			if (str_starts_with($url, $prefix)) {
+				$relative = ltrim(substr($url, strlen($prefix)), '/');
+				return $relative !== '' ? $relative : null;
+			}
+		}
+
+		// Path-only match under /wp-content/uploads/
+		$path = wp_parse_url($url, PHP_URL_PATH);
+		if (! is_string($path) || $path === '') {
+			return null;
+		}
+		$marker = '/wp-content/uploads/';
+		$pos    = strpos($path, $marker);
+		if ($pos === false) {
+			return null;
+		}
+		$relative = ltrim(substr($path, $pos + strlen($marker)), '/');
+		return $relative !== '' ? $relative : null;
+	}
+
+	/**
+	 * Resolve attachment ID from an uploads-relative file path (_wp_attached_file).
+	 */
+	private function attachment_id_from_relative(string $relative): int {
+		$relative = ltrim(str_replace('\\', '/', $relative), '/');
+		if ($relative === '' || str_contains($relative, '..')) {
+			return 0;
+		}
+
+		global $wpdb;
+		if (! isset($wpdb) || ! is_object($wpdb)) {
+			return 0;
+		}
+
+		$id = (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value = %s LIMIT 1",
+				$relative
+			)
+		);
+		return $id > 0 ? $id : 0;
 	}
 
 	/**

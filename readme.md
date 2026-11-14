@@ -5,7 +5,7 @@
 **Requires WordPress:** 7.1+  
 **Tested up to:** 7.1  
 **Requires PHP:** 8.0+  
-**Stable tag:** 2.0.1  
+**Stable tag:** 2.0.2  
 **License:** [GPL-2.0-or-later](https://www.gnu.org/licenses/gpl-2.0.html)
 
 Optional WebP/AVIF upload conversion, JPEG companions, picture/OG fallback, and bulk library conversion for WordPress 7.1+.
@@ -59,6 +59,11 @@ No. GIFs (and SVGs) are left alone by the Image Converter. Upload output format 
 **Tools → Image Converter**. Pick a format and run the batch. Quality and “Convert when useful” are in Settings → Menagerie.
 
 ## Changelog
+
+### 2.0.2
+
+- Open Graph: harden attachment URL lookup (`_wp_attached_file` + featured basename match) so AVIF/WebP og:image URLs actually resolve to their JPEG companion.
+- Open Graph: rewrite via a full-page buffer so cache/SEO plugins that nest `wp_head` buffers cannot leave AVIF in place.
 
 ### 2.0.1
 
